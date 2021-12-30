@@ -1,0 +1,552 @@
+Name: Aditi Goel
+Roll No. : 1901CS04
+
+TASK A)
+
+Question i)
+//creating table
+mysql> create table GradeWeight (
+    -> GradeChar char(1) primary key,
+    -> Weight smallint);
+
+//inserting required values
+mysql> insert into gradeweight values
+    -> ('A',5), ('B',4), ('C',3), ('D',2), ('E',1), ('F',0);
+Query OK, 6 rows affected (0.01 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> select * from gradeweight;
++-----------+--------+
+| GradeChar | Weight |
++-----------+--------+
+| A         |      5 |
+| B         |      4 |
+| C         |      3 |
+| D         |      2 |
+| E         |      1 |
+| F         |      0 |
++-----------+--------+
+6 rows in set (0.00 sec)
+
+
+******************************************************************************
+
+Question ii)
+
+// Adding Grade column to enrolled table
+mysql> alter table enrolled add grade char(1);
+
+// Updating with some relevant values
+mysql> update enrolled
+    -> set grade = 'A'
+    -> where ccode like 'CS1%';
+Query OK, 7 rows affected (0.02 sec)
+Rows matched: 7  Changed: 7  Warnings: 0
+
+mysql> update enrolled
+    -> set grade = 'B'
+    -> where ccode like 'CS2%';
+Query OK, 16 rows affected (0.01 sec)
+Rows matched: 16  Changed: 16  Warnings: 0
+
+mysql> update enrolled
+    -> set grade = 'B'
+    -> where ccode like 'CS3%' and not ccode='CS355';
+Query OK, 11 rows affected (0.01 sec)
+Rows matched: 11  Changed: 11  Warnings: 0
+
+mysql> update enrolled
+    -> set grade = 'C'
+    -> where ccode like 'CS5%';
+Query OK, 8 rows affected (0.01 sec)
+Rows matched: 8  Changed: 8  Warnings: 0
+
+mysql> select * from enrolled;
++----------+-------+------------+-------+
+| RollNo   | CCode | DoE        | grade |
++----------+-------+------------+-------+
+| 1901cs01 | CS102 | 2019-11-01 | A     |
+| 1901cs01 | CS201 | 2021-07-24 | B     |
+| 1901cs01 | CS202 | 2020-11-01 | B     |
+| 1901cs01 | CS204 | 2020-11-01 | B     |
+| 1901cs01 | CS210 | 2020-11-01 | B     |
+| 1901cs01 | CS211 | 2021-07-24 | B     |
+| 1901cs01 | CS212 | 2020-11-01 | B     |
+| 1901cs01 | CS215 | 2020-11-01 | B     |
+| 1901cs01 | CS301 | 2021-07-24 | B     |
+| 1901cs01 | CS302 | 2021-02-01 | B     |
+| 1901cs01 | CS303 | 2021-02-01 | B     |
+| 1901CS01 | CS354 | 2020-01-01 | B     |
+| 1901cs01 | CS501 | 2021-07-24 | C     |
+| 1901CS01 | CS502 | 2021-09-01 | C     |
+| 1901CS01 | CS555 | 2021-09-01 | C     |
+| 1901CS01 | CS561 | 2021-07-24 | C     |
+| 1901cs01 | CS599 | 2021-09-01 | C     |
+| 1901cs02 | CS102 | 2019-11-01 | A     |
+| 1901cs02 | CS201 | 2021-07-24 | B     |
+| 1901cs02 | CS202 | 2020-11-01 | B     |
+| 1901cs02 | CS210 | 2020-11-01 | B     |
+| 1901cs02 | CS212 | 2020-11-01 | B     |
+| 1901cs02 | CS301 | 2021-07-24 | B     |
+| 1901cs02 | CS303 | 2021-02-01 | B     |
+| 1901CS02 | CS354 | 2019-06-09 | B     |
+| 1901CS02 | CS354 | 2021-06-09 | B     |
+| 1901CS02 | CS561 | 2021-07-24 | C     |
+| 1901cs03 | CS102 | 2019-11-01 | A     |
+| 1901cs04 | CS201 | 2021-07-24 | B     |
+| 1901CS04 | CS354 | 2020-01-01 | B     |
+| 1901CS04 | CS355 | 2020-07-01 | NULL  |
+| 1901cs05 | CS202 | 2020-11-01 | B     |
+| 1901CS05 | CS599 | 2021-09-01 | C     |
+| 1901CS06 | CS354 | 2018-06-09 | B     |
+| 1901CS06 | CS599 | 2021-09-01 | C     |
+| 1901cs09 | CS102 | 2019-11-01 | A     |
+| 1901cs10 | CS102 | 2019-11-01 | A     |
+| 1901cs10 | CS202 | 2020-11-01 | B     |
+| 1901cs10 | CS215 | 2020-11-01 | B     |
+| 1901CS10 | CS354 | 2021-06-01 | B     |
+| 1901cs11 | CS102 | 2019-11-01 | A     |
+| 1901cs99 | CS102 | 2019-11-01 | A     |
+| 1901cs99 | CS202 | 2020-11-01 | B     |
++----------+-------+------------+-------+
+43 rows in set (0.00 sec)
+
+******************************************************************************
+
+Question iii)
+
+mysql> insert into enrolled values ('1901cs01', 'CS355', '2021-01-01', NULL);
+mysql> insert into enrolled values ('1901cs02', 'CS355', '2021-01-01', NULL);
+
+// Creating new table CS355_Marks
+mysql> create table CS355_Marks (
+    -> Rollno char(8) primary key,
+    -> Marks smallint);
+
+// Adding all the 2021 CS355 enrolled students to this table
+mysql> insert into CS355_Marks
+    -> select rollno, NULL from enrolled
+    -> where ccode = 'CS355'
+    -> and extract(year from enrolled.doe)=2021;
+Query OK, 2 rows affected (0.02 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> select * from CS355_Marks;
++----------+-------+
+| Rollno   | Marks |
++----------+-------+
+| 1901cs01 |  NULL |
+| 1901cs02 |  NULL |
++----------+-------+
+2 rows in set (0.01 sec)
+
+// Updating marks of CS355_Marks randomly
+mysql> update CS355_Marks
+    -> set Marks = ceil(rand()*5);
+Query OK, 2 rows affected (0.01 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+mysql> select * from CS355_Marks;
++----------+-------+
+| Rollno   | Marks |
++----------+-------+
+| 1901cs01 |     5 |
+| 1901cs02 |     3 |
++----------+-------+
+2 rows in set (0.01 sec)
+
+******************************************************************************
+
+Question iv)
+
+// Adding a new attribute GradeChar in CS355_Marks
+mysql> alter table CS355_Marks add GradeChar char(1);
+Query OK, 0 rows affected (0.07 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+// Updating the attribute
+mysql> update CS355_Marks
+    -> set GradeChar = (
+    -> select gradeweight.GradeChar from gradeweight
+    -> where gradeweight.weight = CS355_Marks.Marks);
+Query OK, 2 rows affected (0.01 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+mysql> select * from CS355_Marks;
++----------+-------+-----------+
+| Rollno   | Marks | GradeChar |
++----------+-------+-----------+
+| 1901cs01 |     5 | A         |
+| 1901cs02 |     3 | C         |
++----------+-------+-----------+
+2 rows in set (0.00 sec)
+
+******************************************************************************
+
+Question 5)
+//data in std_data.txt
+1901cs11,Aayushi,Delhi,F,Aakash@gmail.com,2001-04-17
+1901cs12,Appaji,Kerela,M,Appaji@gmail.com,2001-12-18
+1901cs21,Kalpana,Hisar,F,Kalpana@gmail.com,2002-01-18
+1901cs22,Aathira,Kochi,F,Aathira@gmail.com,2001-01-12
+1901cs23,Kiran,Bhiwadi,F,Kiran@gmail.com,2002-02-11
+1901cs25,Priyaansi,Bharuch,F,Priyaansi@gmail.com,2001-03-18
+1901cs26,Parishi,Indore,F,Parishi@gmail.com,2002-01-18
+1901cs27,Apoorva,Kanpur,F,Apoorva@gmail.com,2001-01-14
+1901cs29,Prachi,Ggn,F,Prachi@gmail.com,2001-03-18
+1901cs30,Adarsh,Siliguri,M,Adarsh@gmail.com,2001-10-04
+
+mysql> load data local infile 'std_data.txt' into table student fields terminated by ',' lines terminated by '\n';
+
+mysql> select * from student;
++----------+-----------+----------+--------+---------------------+------------+
+| Rollno   | SName     | City     | gender | email               | DoB        |
++----------+-----------+----------+--------+---------------------+------------+
+| 1901cs01 | Aditi     | Ggn      | F      | Aditi@gmail.com     | 2001-04-17 |
+| 1901cs02 | Bob       | Indore   | M      | Bob@gmail.com       | 2001-12-14 |
+| 1901cs03 | Caty      | Bhopal   | F      | Caty@gmail.com      | 2001-04-17 |
+| 1901cs04 | Devin     | Delhi    | M      | Devin@gmail.com     | 2001-12-14 |
+| 1901cs05 | Erin      | Mumbai   | F      | Erin@gmail.com      | 2001-04-17 |
+| 1901cs06 | Florida   | Bnglr    | F      | Florida@gmail.com   | 2001-04-17 |
+| 1901cs07 | George    | Surat    | M      | George@gmail.com    | 2001-12-14 |
+| 1901cs08 | Harsh     | Chdgrh   | M      | Harsh@gmail.com     | 2001-05-03 |
+| 1901cs09 | Rohan     | Patna    | M      | Rohan@gmail.com     | 2001-12-14 |
+| 1901cs10 | Sushmita  | Hisar    | F      | Sushmita@gmail.com  | 2001-04-17 |
+| 1901cs11 | Aayushi   | Delhi    | F      | Aakash@gmail.com    | 2001-04-17 |
+| 1901cs12 | Appaji    | Kerela   | M      | Appaji@gmail.com    | 2001-12-18 |
+| 1901cs21 | Kalpana   | Hisar    | F      | Kalpana@gmail.com   | 2002-01-18 |
+| 1901cs22 | Aathira   | Kochi    | F      | Aathira@gmail.com   | 2001-01-12 |
+| 1901cs23 | Kiran     | Bhiwadi  | F      | Kiran@gmail.com     | 2002-02-11 |
+| 1901cs25 | Priyaansi | Bharuch  | F      | Priyaansi@gmail.com | 2001-03-18 |
+| 1901cs26 | Parishi   | Indore   | F      | Parishi@gmail.com   | 2002-01-18 |
+| 1901cs27 | Apoorva   | Kanpur   | F      | Apoorva@gmail.com   | 2001-01-14 |
+| 1901cs29 | Prachi    | Ggn      | F      | Prachi@gmail.com    | 2001-03-18 |
+| 1901cs30 | Adarsh    | Siliguri | M      | Adarsh@gmail.com    | 2001-10-04 |
+| 1901cs99 | Yash      | Bnglr    | M      | Yash@gmail.com      | 2001-12-14 |
++----------+-----------+----------+--------+---------------------+------------+
+21 rows in set (0.00 sec)
+
+Data in course_data.txt:
+CS601,Course 14,4,Core
+CS602,Course 15,4,Core
+CS603,Course 16,6,Elective
+CS604,Course 17,4,Core
+CS605,Course 18,8,Open Elective
+CS606,Course 19,4,Core
+CS607,Course 20,4,Elective
+CS608,Course 21,6,Core
+CS609,Course 22,6,Core
+CS610,Course 23,4,Core
+
+mysql> load data local infile 'course_data.txt' into table course fields terminated by ',' lines terminated by '\n';
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Deleted: 0  Skipped: 0  Warnings: 0
+
+mysql> select * from course;
++-------+---------------------+--------+----------------+
+| CCode | CName               | Credit | ctype          |
++-------+---------------------+--------+----------------+
+| CS102 | Crs_with_lessCredit |      4 | Open Elective  |
+| CS201 | Crs_with_lessCredit |      4 | Core           |
+| CS202 | Course3             |      6 | Elective       |
+| CS204 | Algo                |      8 | Core           |
+| CS210 | Crs_with_lessCredit |      4 | Core           |
+| CS211 | Course5             |      6 | Elective       |
+| CS212 | Course6             |      8 | Elective       |
+| CS215 | Course7             |      8 | Core           |
+| CS301 | Course8             |      6 | Core           |
+| CS302 | Crs_with_lessCredit |      4 | Core           |
+| CS303 | Course10            |      8 | Core           |
+| CS354 | Database Systems    |      6 | Open Elective  |
+| CS355 | Database Lab        |      6 | Core           |
+| CS501 | Level_5_1           |      6 | Core           |
+| CS502 | Level_5_2           |      8 | Open Elective  |
+| CS555 | Course 12           |      8 | Elective       |
+| CS561 | Course 11           |      8 | Elective       |
+| CS599 | Course 13           |      8 | Core           |
+| CS601 | Course 14           |      4 | Core           |
+| CS602 | Course 15           |      4 | Core           |
+| CS603 | Course 16           |      6 | Elective       |
+| CS604 | Course 17           |      4 | Core           |
+| CS605 | Course 18           |      8 | Open Elective  |
+| CS606 | Course 19           |      4 | Core           |
+| CS607 | Course 20           |      4 | Elective       |
+| CS608 | Course 21           |      6 | Core           |
+| CS609 | Course 22           |      6 | Core           |
+| CS610 | Course 23           |      4 | Core           |
++-------+---------------------+--------+----------------+
+28 rows in set (0.00 sec)
+
+
+******************************************************************************
+******************************************************************************
+
+TASK B)
+
+Question 1)
+
+// Storing course details, with credits in binary number system
+mysql>select ccode,cname, conv(credit,10,2) as credit,ctype
+    ->INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/ques1.txt’
+    ->FIELDS TERMINATED BY ‘,’ LINES TERMINATED BY ‘\n’
+    ->from course;
+
+//Query:
+mysql>select ccode,cname, conv(credit,10,2) as credit,ctype
+    ->from course;
+
+    +-------+---------------------+--------+----------------+
+    | ccode | cname               | credit | ctype          |
+    +-------+---------------------+--------+----------------+
+    | CS102 | Crs_with_lessCredit | 100    | Open Elective  |
+    | CS201 | Crs_with_lessCredit | 100    | Core           |
+    | CS202 | Course3             | 110    | Elective       |
+    | CS204 | Algo                | 1000   | Core           |
+    | CS210 | Crs_with_lessCredit | 100    | Core           |
+    | CS211 | Course5             | 110    | Elective       |
+    | CS212 | Course6             | 1000   | Elective       |
+    | CS215 | Course7             | 1000   | Core           |
+    | CS301 | Course8             | 110    | Core           |
+    | CS302 | Crs_with_lessCredit | 100    | Core           |
+    | CS303 | Course10            | 1000   | Core           |
+    | CS354 | Database Systems    | 110    | Open Elective  |
+    | CS355 | Database Lab        | 110    | Core           |
+    | CS501 | Level_5_1           | 110    | Core           |
+    | CS502 | Level_5_2           | 1000   | Open Elective  |
+    | CS555 | Course 12           | 1000   | Elective       |
+    | CS561 | Course 11           | 1000   | Elective       |
+    | CS599 | Course 13           | 1000   | Core           |
+    | CS601 | Course 14           | 100    | Core           |
+    | CS602 | Course 15           | 100    | Core           |
+    | CS603 | Course 16           | 110    | Elective       |
+    | CS604 | Course 17           | 100    | Core           |
+    | CS605 | Course 18           | 1000   | Open Elective  |
+    | CS606 | Course 19           | 100    | Core           |
+    | CS607 | Course 20           | 100    | Elective       |
+    | CS608 | Course 21           | 110    | Core           |
+    | CS609 | Course 22           | 110    | Core           |
+    | CS610 | Course 23           | 100    | Core           |
+    +-------+---------------------+--------+----------------+
+
+//Data stored in ques1.txt:
+
+CS102,Crs_with_lessCredit,100,Open Elective
+CS201,Crs_with_lessCredit,100,Core
+CS202,Course3,110,Elective
+CS204,Algo,1000,Core
+CS210,Crs_with_lessCredit,100,Core
+CS211,Course5,110,Elective
+CS212,Course6,1000,Elective
+CS215,Course7,1000,Core
+CS301,Course8,110,Core
+CS302,Crs_with_lessCredit,100,Core
+CS303,Course10,1000,Core
+CS354,Database Systems,110,Open Elective
+CS355,Database Lab,110,Core
+CS501,Level_5_1,110,Core
+CS502,Level_5_2,1000,Open Elective
+CS555,Course 12,1000,Elective
+CS561,Course 11,1000,Elective
+CS599,Course 13,1000,Core
+CS601,Course 14,100,Core
+CS602,Course 15,100,Core
+CS603,Course 16,110,Elective
+CS604,Course 17,100,Core
+CS605,Course 18,1000,Open Elective
+CS606,Course 19,100,Core
+CS607,Course 20,100,Elective
+CS608,Course 21,110,Core
+CS609,Course 22,110,Core
+CS610,Course 23,100,Core
+
+******************************************************************************
+
+Question 2)
+
+//Number 30.4375 calculated using [365 + (1/4)]/12
+//Storing
+mysql>CREATE VIEW std_age as
+    ->SELECT RollNo, TIMESTAMPDIFF(YEAR,DoB,CURDATE()) AS Age_Year,
+    ->TIMESTAMPDIFF(MONTH,DoB,CURDATE())%12 AS Age_Months,
+    ->TIMESTAMPDIFF(DAY,DoB,CURDATE())%30 AS Age_Day
+    ->INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/ques2.txt'
+    ->FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+    ->FROM Student;
+
+mysql> Select * from std_age;
++----------+----------+-----------+---------+
+| rollno   | Age_year | Age_month | Age_day |
++----------+----------+-----------+---------+
+| 1901cs01 |       20 |         4 |      22 |
+| 1901cs02 |       19 |         8 |      24 |
+| 1901cs03 |       20 |         4 |      22 |
+| 1901cs04 |       19 |         8 |      24 |
+| 1901cs05 |       20 |         4 |      22 |
+| 1901cs06 |       20 |         4 |      22 |
+| 1901cs07 |       19 |         8 |      24 |
+| 1901cs08 |       20 |         4 |       6 |
+| 1901cs09 |       19 |         8 |      24 |
+| 1901cs10 |       20 |         4 |      22 |
+| 1901cs11 |       20 |         4 |      22 |
+| 1901cs12 |       19 |         8 |      20 |
+| 1901cs21 |       19 |         7 |      20 |
+| 1901cs22 |       20 |         7 |      25 |
+| 1901cs23 |       19 |         6 |      26 |
+| 1901cs25 |       20 |         5 |      21 |
+| 1901cs26 |       19 |         7 |      20 |
+| 1901cs27 |       20 |         7 |      23 |
+| 1901cs29 |       20 |         5 |      21 |
+| 1901cs30 |       19 |        11 |       4 |
+| 1901cs99 |       19 |         8 |      24 |
++----------+----------+-----------+---------+
+21 rows in set (0.01 sec)
+
+//Data stored in ques2.txt:
+
+1901cs01,20,4,10
+1901cs02,19,8,9
+1901cs03,20,4,10
+1901cs04,19,8,9
+1901cs05,20,4,10
+1901cs06,20,4,10
+1901cs07,19,8,9
+1901cs08,20,4,24
+1901cs09,19,8,9
+1901cs10,20,4,10
+1901cs11,20,4,10
+1901cs12,19,8,5
+1901cs21,19,7,4
+1901cs22,20,7,15
+1901cs23,19,6,10
+1901cs25,20,5,10
+1901cs26,19,7,4
+1901cs27,20,7,13
+1901cs29,20,5,10
+1901cs30,19,11,20
+1901cs99,19,8,9
+
+******************************************************************************
+
+Question 3)
+
+// Extra CASE function is added to handle case when a grade is not assigned to that course for the student
+Query:
+mysql> SELECT SUM(Course.Credit * (CASE WHEN Enrolled.Grade IS NOT NULL THEN GradeWeight.Weight ELSE 0 END))/SUM(Course.Credit) AS 1901CS99_cpi FROM Enrolled
+    -> inner join GradeWeight ON Enrolled.Grade = GradeWeight.GradeChar
+    -> inner join Course ON Enrolled.CCode = Course.CCode
+    -> WHERE RollNo = '1901CS99'
+    ->INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/ques3.txt'
+    ->FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+
++--------------+
+| 1901CS99_cpi |
++--------------+
+|       4.4000 |
++--------------+
+
+Data in ques3.txt:
+4.4000
+
+******************************************************************************
+
+Question 4)
+
+// Creating a view std_cpi to show CPI of all the students
+// Extra CASE function is added in case a grade is not assigned to the student in a course or student is not enrolled in any course
+
+mysql> CREATE VIEW std_cpi AS
+    -> SELECT Student.RollNo, SUM((CASE WHEN Course.Credit IS NOT NULL THEN Course.Credit ELSE 0 END) * (CASE WHEN Enrolled.Grade IS NOT NULL THEN GradeWeight.Weight ELSE 0 END))/SUM(CASE WHEN Course.Credit IS NOT NULL THEN Course.Credit ELSE 0 END) AS CPI FROM Student
+    -> left join Enrolled ON Student.RollNo = Enrolled.RollNo
+    -> left join GradeWeight ON Enrolled.Grade = GradeWeight.GradeChar
+    -> left join Course ON Enrolled.CCode = Course.CCode
+    -> GROUP BY Student.RollNo;
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> select * from std_cpi;
++----------+--------+
+| RollNo   | CPI    |
++----------+--------+
+| 1901cs01 | 3.5000 |
+| 1901cs02 | 3.5758 |
+| 1901cs03 | 5.0000 |
+| 1901cs04 | 2.5000 |
+| 1901cs05 | 3.4286 |
+| 1901cs06 | 3.4286 |
+| 1901cs07 |   NULL |
+| 1901cs08 |   NULL |
+| 1901cs09 | 5.0000 |
+| 1901cs10 | 4.1667 |
+| 1901cs11 | 5.0000 |
+| 1901cs12 |   NULL |
+| 1901cs21 |   NULL |
+| 1901cs22 |   NULL |
+| 1901cs23 |   NULL |
+| 1901cs25 |   NULL |
+| 1901cs26 |   NULL |
+| 1901cs27 |   NULL |
+| 1901cs29 |   NULL |
+| 1901cs30 |   NULL |
+| 1901cs99 | 4.4000 |
++----------+--------+
+21 rows in set (0.01 sec)
+
+Data in ques4.txt:
+1901cs01,3.5000
+1901cs02,3.5758
+1901cs03,5.0000
+1901cs04,2.5000
+1901cs05,3.4286
+1901cs06,3.4286
+1901cs07,\N
+1901cs08,\N
+1901cs09,5.0000
+1901cs10,4.1667
+1901cs11,5.0000
+1901cs12,\N
+1901cs21,\N
+1901cs22,\N
+1901cs23,\N
+1901cs25,\N
+1901cs26,\N
+1901cs27,\N
+1901cs29,\N
+1901cs30,\N
+1901cs99,4.4000
+
+******************************************************************************
+
+Question 5)
+//Inserting more entries in Enrolled
+mysql> insert into enrolled values ('1901cs04', 'CS201','2020-01-01','A'), ('1901cs01', 'CS201','2020-01-01','A'),
+    -> ('1901cs04', 'CS202','2020-01-01','A'), ('1901cs01', 'CS202','2020-01-01','A'),
+    -> ('1901cs04', 'CS204','2020-01-01','A'),('1901cs01', 'CS204','2020-01-01','A');
+mysql> insert into enrolled values ('1901cs04', 'CS210','2020-01-01','A'), ('1901cs01', 'CS210','2020-01-01','A'), ('1901cs04', 'CS211','2020-01-01','A');
+
+//grouping by roll no and counting
+//selecting entries with count greater than equal to 5
+
+mysql> select * from Student
+    -> inner join (select RollNo,count(Grade) as count_A_grade from Enrolled
+    -> where Grade='A' group by RollNo having(count_A_grade>=5)) as T on T.RollNo=Student.RollNo
+    -> INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/ques5.txt'
+    -> FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
+Query OK, 2 rows affected (0.01 sec)
+
++----------+-------+-------+--------+-----------------+------------+----------+---------------+
+| Rollno   | SName | City  | gender | email           | DoB        | RollNo   | count_A_grade |
++----------+-------+-------+--------+-----------------+------------+----------+---------------+
+| 1901cs01 | Aditi | Ggn   | F      | Aditi@gmail.com | 2001-04-17 | 1901cs01 |             5 |
+| 1901cs04 | Devin | Delhi | M      | Devin@gmail.com | 2001-12-14 | 1901cs04 |             5 |
++----------+-------+-------+--------+-----------------+------------+----------+---------------+
+
+Data in ques5.txt:
+
+1901cs01,Aditi,Ggn,F,Aditi@gmail.com,2001-04-17,1901cs01,5
+1901cs04,Devin,Delhi,M,Devin@gmail.com,2001-12-14,1901cs04,5
+
+******************************************************************************
+******************************************************************************
+
+TASK C)
+
+mysqldump -u root -p --databases dblab --tables student course enrolled>dblab_dump.sql

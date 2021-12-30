@@ -1,0 +1,293 @@
+Name: ADITI GOEL
+Roll no: 1901CS04
+
+
+**************************************************************************
+
+Question 1)
+
+# RIGHT (rollno, 4) will select 4 characters from the right end
+
+mysql> SELECT RIGHT(Rollno,4) FROM student;
++-----------------+
+| right(Rollno,4) |
++-----------------+
+| cs11            |
+| cs01            |
+| cs12            |
+| cs02            |
+| cs03            |
+| cs04            |
+| cs05            |
+| cs06            |
+| cs07            |
+| cs08            |
+| cs09            |
+| cs10            |
+| cs99            |
++-----------------+
+13 rows in set (0.01 sec)
+
+
+
+**************************************************************************
+
+Question 2)
+
+#inner concat_w will concatenate first 4 characters of roll no with last 3 characters of code with a '@' in between
+#outer concat_w will concatenate the result from inner concat_w with the yoe with a '#' in between
+
+mysql> SELECT rollno, ccode, yoe, CONCAT_W('#',CONCAT_W('@',left(rollno,4),right(ccode,3)),yoe) as Combination FROM enrolled;
++----------+-------+------+---------------+
+| rollno   | ccode | yoe  | Combination   |
++----------+-------+------+---------------+
+| 1901cs01 | CS102 | 2019 | 1901@102#2019 |
+| 1901cs02 | CS102 | 2019 | 1901@102#2019 |
+| 1901cs03 | CS102 | 2019 | 1901@102#2019 |
+| 1901cs09 | CS102 | 2019 | 1901@102#2019 |
+| 1901cs10 | CS102 | 2019 | 1901@102#2019 |
+| 1901cs11 | CS102 | 2019 | 1901@102#2019 |
+| 1901cs99 | CS102 | 2019 | 1901@102#2019 |
+| 1901cs01 | CS201 | 2020 | 1901@201#2020 |
+| 1901cs02 | CS201 | 2020 | 1901@201#2020 |
+| 1901cs04 | CS201 | 2020 | 1901@201#2020 |
+| 1901cs01 | CS202 | 2020 | 1901@202#2020 |
+| 1901cs02 | CS202 | 2020 | 1901@202#2020 |
+| 1901cs05 | CS202 | 2020 | 1901@202#2020 |
+| 1901cs10 | CS202 | 2020 | 1901@202#2020 |
+| 1901cs99 | CS202 | 2020 | 1901@202#2020 |
+| 1901cs01 | CS204 | 2020 | 1901@204#2020 |
+| 1901cs10 | CS204 | 2020 | 1901@204#2020 |
+| 1901cs10 | CS204 | 2021 | 1901@204#2021 |
+| 1901cs01 | CS210 | 2020 | 1901@210#2020 |
+| 1901cs02 | CS210 | 2020 | 1901@210#2020 |
+| 1901cs01 | CS211 | 2020 | 1901@211#2020 |
+| 1901cs01 | CS212 | 2020 | 1901@212#2020 |
+| 1901cs02 | CS212 | 2020 | 1901@212#2020 |
+| 1901cs01 | CS215 | 2020 | 1901@215#2020 |
+| 1901cs10 | CS215 | 2020 | 1901@215#2020 |
+| 1901cs01 | CS301 | 2021 | 1901@301#2021 |
+| 1901cs02 | CS301 | 2021 | 1901@301#2021 |
+| 1901cs01 | CS302 | 2021 | 1901@302#2021 |
+| 1901cs01 | CS303 | 2020 | 1901@303#2020 |
+| 1901cs02 | CS303 | 2020 | 1901@303#2020 |
+| 1901CS01 | CS561 | 2021 | 1901@561#2021 |
+| 1901CS02 | CS561 | 2021 | 1901@561#2021 |
+| 1901CS05 | CS599 | 2020 | 1901@599#2020 |
+| 1901CS06 | CS599 | 2021 | 1901@599#2021 |
++----------+-------+------+---------------+
+34 rows in set (0.01 sec)
+
+
+
+**************************************************************************
+
+
+Question 3)
+
+#replace would replace the occurences of cs with cse in Rollno
+
+mysql> SELECT REPLACE(Rollno,'cs','CSE') FROM student;
++----------------------------+
+| REPLACE(Rollno,'cs','CSE') |
++----------------------------+
+| 1901CSE11                  |
+| 1901CSE01                  |
+| 1901CSE12                  |
+| 1901CSE02                  |
+| 1901CSE03                  |
+| 1901CSE04                  |
+| 1901CSE05                  |
+| 1901CSE06                  |
+| 1901CSE07                  |
+| 1901CSE08                  |
+| 1901CSE09                  |
+| 1901CSE10                  |
+| 1901CSE99                  |
++----------------------------+
+13 rows in set (0.00 sec)
+
+
+**************************************************************************
+
+
+Question 4)
+
+#insrt query returns the starting point of domain of email
+#locate searches for position of .com starting FROM the domain position
+#insert query replaces 4 character of .com with .co.in
+
+mysql> SELECT insert(email, locate('.com', email, instr(email,'@')),4,'.co.in') as email FROM student;
++----------------------+
+| email                |
++----------------------+
+| Aakash@gmail.co.in   |
+| Aditi@gmail.co.in    |
+| Appaji@gmail.co.in   |
+| Bob@gmail.co.in      |
+| Caty@gmail.co.in     |
+| Devin@gmail.co.in    |
+| Erin@gmail.co.in     |
+| Florida@gmail.co.in  |
+| George@gmail.co.in   |
+| Harsh@gmail.co.in    |
+| Rohan@gmail.co.in    |
+| Sushmita@gmail.co.in |
+| Yash@gmail.co.in     |
++----------------------+
+13 rows in set (0.00 sec)
+
+
+
+**************************************************************************
+
+Question 5)
+
+# REPEAT('*', Credit) would repeat * credit number of times
+
+mysql> SELECT CCode, Credit, REPEAT('*', Credit) as Credit_in_star FROM course;
++-------+--------+----------------+
+| CCode | Credit | Credit_in_star |
++-------+--------+----------------+
+| CS102 |      4 | ****           |
+| CS201 |      4 | ****           |
+| CS202 |      6 | ******         |
+| CS204 |      8 | ********       |
+| CS210 |      4 | ****           |
+| CS211 |      6 | ******         |
+| CS212 |      8 | ********       |
+| CS215 |      8 | ********       |
+| CS301 |      6 | ******         |
+| CS302 |      4 | ****           |
+| CS303 |      8 | ********       |
+| CS354 |      6 | ******         |
+| CS501 |      6 | ******         |
+| CS502 |      8 | ********       |
+| CS555 |      8 | ********       |
+| CS561 |      8 | ********       |
+| CS599 |      8 | ********       |
++-------+--------+----------------+
+17 rows in set (0.00 sec)
+
+
+**************************************************************************
+
+
+Question 6)
+
+#To check palindrome we will compare the name with its reverse, strcmp would return 0 is they are same
+
+mysql> SELECT SName FROM student where STRCMP(SName, REVERSE(SName))=0;
++-------+
+| SName |
++-------+
+| Bob   |
++-------+
+1 row in set (0.01 sec)
+
+
+**************************************************************************
+
+
+Question 7)
+
+#Enrolling some students in CS354 Course
+
+mysql> insert into enrolled values ('1901CS01', 'CS354', 2021), ('1901CS04', 'CS354', 2021);
+Query OK, 2 rows affected (0.03 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+#selecting students enrolled in cs354 and inserting those entries in the new table
+
+mysql> CREATE TABLE CS54EnrolledList
+    -> SELECT Student.* FROM student, enrolled
+    -> where student.rollno = enrolled.rollno
+    -> AND enrolled.CCode = 'CS354';
+Query OK, 2 rows affected (0.10 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM CS354EnrolledList;
++----------+-------+-------+--------+-----------------+
+| Rollno   | SName | City  | gender | email           |
++----------+-------+-------+--------+-----------------+
+| 1901cs01 | Aditi | Ggn   | F      | Aditi@gmail.com |
+| 1901cs04 | Devin | Delhi | M      | Devin@gmail.com |
++----------+-------+-------+--------+-----------------+
+2 rows in set (0.01 sec)
+
+
+**************************************************************************
+
+
+Question 8)
+
+#Enrolling 1901cs01 in all the courses;
+mysql> insert into enrolled values('1901cs01', 'CS501', 2021), ('1901CS01', 'CS502', 2022), ('1901CS01', 'CS555', 2021), ('1901cs01', 'CS599', 2021);
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+# count(ccode) would give count of total no. of courses, let this be x
+# then we'll select students having enrolled in distinct x number of courses
+
+mysql> SELECT rollno FROM enrolled
+    -> group by rollno
+    -> having count(distinct ccode) = (
+    -> SELECT count(ccode) FROM course);
++----------+
+| rollno   |
++----------+
+| 1901cs01 |
++----------+
+1 row in set (0.00 sec)
+
+
+**************************************************************************
+
+
+Question 9)
+
+#creating a view with 'MINUS' kind of procedure i.e.
+# first selecting all and then removing those which are present in second query
+
+mysql> CREATE VIEW No_enroll_courses AS
+    -> SELECT * FROM course
+    -> WHERE CCode NOT IN (
+    -> SELECT DISTINCT Enrolled.CCode
+    -> FROM Enrolled);
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT * FROM No_enroll_courses;
++-------+-----------+--------+---------------+
+| CCode | CName     | Credit | ctype         |
++-------+-----------+--------+---------------+
+| CS501 | Level_5_1 |      6 | Core          |
+| CS502 | Level_5_2 |      8 | Open Elective |
+| CS555 | Course 12 |      8 | Elective      |
++-------+-----------+--------+---------------+
+3 rows in set (0.02 sec)
+
+
+
+**************************************************************************
+
+Question 10)
+
+#grouped by Rollno, then made sub groups with yoe, then counted records with more than 4 count
+
+mysql> CREATE VIEW Stud_with_atl_5 AS
+    -> SELECT * FROM student
+    -> WHERE Rollno in (
+    -> SELECT Enrolled.Rollno
+    -> FROM Enrolled
+    -> GROUP BY Enrolled.Rollno, yoe
+    -> HAVING COUNT(Enrolled.Rollno)>4);
+Query OK, 0 rows affected (0.02 sec)
+
+
+mysql> SELECT * FROM Stud_with_atl_5;
++----------+----------+--------+--------+--------------------+
+| Rollno   | SName    | City   | gender | email              |
++----------+----------+--------+--------+--------------------+
+| 1901cs01 | Aditi    | Ggn    | F      | Aditi@gmail.com    |
+| 1901cs02 | Bob      | Indore | M      | Bob@gmail.com      |
++----------+----------+--------+--------+--------------------+

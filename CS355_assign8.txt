@@ -1,0 +1,323 @@
+Name: Aditi Goel
+Roll No. : 1901CS04
+
+**************************************************************************
+
+TASK 1)
+
+//Creating tables
+mysql> CREATE TABLE stateCases (
+    -> StateCode char(2),
+    -> EntryDate date,
+    -> NumofCases INT NOT NULL,
+    -> PRIMARY KEY(StateCode, EntryDate)
+    -> );
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> CREATE TABLE overallCases (
+    -> StateCode char(2),
+    -> totalCases INT
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+**************************************************************************
+
+//Insertion Trigger
+mysql> DELIMITER $$
+mysql> CREATE TRIGGER before_stateCases_insert
+    -> BEFORE INSERT
+    -> ON stateCases FOR EACH ROW
+    -> BEGIN
+    -> DECLARE rowcount INT;
+    ->  SELECT COUNT(*)
+    ->  INTO rowcount
+    ->  FROM overallCases
+    ->  WHERE overallCases.StateCode = new.StateCode;
+    ->  IF rowcount > 0 THEN
+    ->  UPDATE overallCases
+    ->  SET totalCases = totalCases + new.NumofCases
+    ->  WHERE overallCases.StateCode = new.StateCode;
+    -> ELSE
+    ->  INSERT INTO overallCases(StateCode, totalCases)
+    ->  VALUES(new.StateCode, new.NumofCases);
+    -> END IF;
+    -> END $$
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> DELIMITER ;
+
+// Testing Insertion trigger
+
+mysql> INSERT INTO stateCases values ('HR', '2021/10/20', 200);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> SELECT * FROM stateCases;
++-----------+------------+------------+
+| StateCode | EntryDate  | NumofCases |
++-----------+------------+------------+
+| HR        | 2021-10-20 |        200 |
++-----------+------------+------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT * FROM overallcases;
++-----------+------------+
+| StateCode | totalCases |
++-----------+------------+
+| HR        |        200 |
++-----------+------------+
+1 row in set (0.00 sec)
+
+**************************************************************************
+
+//Deletion trigger
+
+mysql> DELIMITER $$
+mysql> CREATE TRIGGER after_stateCases_delete
+    -> AFTER DELETE
+    -> ON stateCases FOR EACH ROW
+    -> BEGIN
+    -> DECLARE cnt int;
+    -> UPDATE overallCases
+    -> SET totalCases = totalCases - old.NumofCases
+    -> WHERE overallCases.StateCode = old.StateCode;
+    -> SELECT totalCases into cnt FROM overallCases WHERE stateCode=old.stateCode;
+    -> IF cnt=0 then
+    -> DELETE FROM overallCases WHERE stateCode=old.stateCode;
+    -> END IF;
+    -> END $$
+mysql> DELIMITER ;
+
+// Testing Deletion trigger
+
+mysql> INSERT INTO stateCases values ('HR', '2020/10/20', 20);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM overallCases;
++-----------+------------+
+| StateCode | totalCases |
++-----------+------------+
+| HR        |        220 |
+| UP        |       9870 |
++-----------+------------+
+2 rows in set (0.01 sec)
+
+mysql> DELETE FROM stateCases WHERE stateCode='HR' AND NumofCases=20;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM overallCases;
++-----------+------------+
+| StateCode | totalCases |
++-----------+------------+
+| HR        |        200 |
+| UP        |       9870 |
++-----------+------------+
+2 rows in set (0.00 sec)
+
+**************************************************************************
+
+//Updation trigger
+
+mysql> DELIMITER $$
+mysql> CREATE TRIGGER before_stateCases_update
+    -> BEFORE UPDATE
+    -> ON stateCases FOR EACH ROW
+    -> BEGIN
+    -> DECLARE cnt, rowcount int;
+    -> SELECT count(*) into rowcount FROM overallCases
+    -> WHERE stateCode=new.stateCode;
+    -> UPDATE overallCases set totalCases=totalCases-old.NumofCases
+    -> WHERE stateCode=old.stateCode;
+    -> IF rowcount>0 then
+    -> UPDATE overallCases set totalCases=totalCases+new.NumofCases
+    -> WHERE stateCode=new.stateCode;
+    -> ELSE
+    -> INSERT INTO overallCases(StateCode, totalCases)
+    -> VALUES(new.StateCode, new.NumofCases);
+    -> END IF;
+    -> SELECT totalCases into cnt FROM overallCases WHERE stateCode=old.stateCode;
+    -> IF cnt=0 then
+    -> DELETE FROM overallCases WHERE stateCode=old.stateCode;
+    -> END IF;
+    -> END $$
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> DELIMITER ;
+
+// Testing Updation trigger
+
+mysql> SELECT * FROM statecases;
++-----------+------------+------------+
+| StateCode | EntryDate  | NumofCases |
++-----------+------------+------------+
+| HR        | 2021-10-20 |        489 |
+| UP        | 2020-10-20 |       9870 |
++-----------+------------+------------+
+2 rows in set (0.01 sec)
+
+mysql> INSERT INTO stateCases values ('MP', '2020/01/02', 667);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> UPDATE stateCases
+    -> SET ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 2
+mysql> SELECT * FROM overallcases;
++-----------+------------+
+| StateCode | totalCases |
++-----------+------------+
+| HR        |        489 |
+| UP        |       9870 |
+| MP        |        667 |
++-----------+------------+
+3 rows in set (0.00 sec)
+
+mysql> UPDATE stateCases
+    -> SET StateCode = 'HR' WHERE NumofCases=667;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM overallcases;
++-----------+------------+
+| StateCode | totalCases |
++-----------+------------+
+| HR        |       1156 |
+| UP        |       9870 |
++-----------+------------+
+2 rows in set (0.00 sec)
+
+**************************************************************************
+
+TASK 2)
+
+//Creating Tables
+mysql> CREATE TABLE account (
+    -> anum varchar(10) PRIMARY KEY,
+    -> name varchar(20) NOT NULL,
+    -> balance INT NOT NULL
+    -> );
+
+mysql> CREATE TABLE accountLog (
+    -> anum varchar(10),
+    -> operation varchar(20),
+    -> dateofoperation date
+    -> );
+
+**************************************************************************
+
+Ques 1)
+
+// withdraw(anum, amount) function
+mysql> delimiter $$
+mysql> CREATE FUNCTION withdraw(anum_in varchar(10), amount int)
+    -> RETURNS INT
+    -> DETERMINISTIC
+    -> BEGIN
+    -> IF EXISTS (SELECT * FROM account WHERE anum = anum_in AND balance > = amount) THEN
+    -> UPDATE account SET balance = balance - amount WHERE anum = anum_in;
+    -> RETURN (SELECT balance FROM account WHERE anum = anum_in);
+    -> ELSE RETURN -1;
+    -> END IF;
+    -> END$$
+Query OK, 0 rows affected (0.04 sec)
+mysql> delimiter ;
+
+mysql> insert into account values ('A', 'a', 23);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> select withdraw('A', 5);
++------------------+
+| withdraw('A', 5) |
++------------------+
+|               18 |
++------------------+
+1 row in set (0.01 sec)
+
+mysql> select withdraw('A', 20);
++-------------------+
+| withdraw('A', 20) |
++-------------------+
+|                -1 |
++-------------------+
+1 row in set (0.00 sec)
+
+**************************************************************************
+
+// deposit(anum, amount) function
+
+mysql> delimiter $$
+mysql> CREATE FUNCTION deposit(anum_in varchar(10), amount int)
+    -> RETURNS INT
+    -> DETERMINISTIC
+    -> BEGIN
+    -> IF EXISTS (SELECT * FROM account WHERE anum = anum_in) THEN
+    -> UPDATE account SET balance = balance + amount WHERE anum = anum_in;
+    -> RETURN (SELECT balance FROM account WHERE anum = anum_in);
+    -> ELSE RETURN -1;
+    -> END IF;
+    -> END$$
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> delimiter ;
+
+mysql> select deposit('A', 1000);
++--------------------+
+| deposit('A', 1000) |
++--------------------+
+|               1018 |
++--------------------+
+1 row in set (0.01 sec)
+
+mysql> select * from account where anum = 'A';
++------+------+---------+
+| anum | name | balance |
++------+------+---------+
+| A    | a    |    1018 |
++------+------+---------+
+1 row in set (0.00 sec)
+
+**************************************************************************
+
+Ques 2)
+
+mysql> delimiter $$
+mysql> CREATE TRIGGER after_account_update
+    -> AFTER UPDATE
+    -> ON account FOR EACH ROW
+    -> BEGIN
+    -> if new.balance>old.balance then
+    -> insert into accountLog values (new.anum,CONCAT('Deposit',new.balance - old.balance),curdate());
+    -> ELSE
+    -> insert into accountLog values (new.anum,CONCAT('Withdraw',old.balance - new.balance),curdate());
+    -> END IF;
+    -> END $$
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> delimiter ;
+
+// Testing trigger
+
+mysql> select deposit('B',34);
++-----------------+
+| deposit('B',34) |
++-----------------+
+|             134 |
++-----------------+
+1 row in set (0.01 sec)
+
+mysql> select withdraw('C',1);
++-----------------+
+| withdraw('C',1) |
++-----------------+
+|             429 |
++-----------------+
+1 row in set (0.01 sec)
+
+mysql> select * from accountlog;
++------+------------+-----------------+
+| anum | operation  | dateofoperation |
++------+------------+-----------------+
+| B    | Deposit 34 | 2021-10-20      |
+| C    | Withdraw 1 | 2021-10-20      |
++------+------------+-----------------+
+2 rows in set (0.01 sec)
+
+**************************************************************************

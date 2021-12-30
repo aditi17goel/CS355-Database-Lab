@@ -1,0 +1,449 @@
+NAME: ADITI GOEL
+ROLL NO. : 1901CS04
+CS355 ASSIGNMENT 5
+
+TASK A)
+
+Subtask 1)
+# adding dob column in student
+
+mysql> alter table student add DoB date;
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+-------------------------------------------------------------------------------
+
+Subtask 2)
+
+# adding DoE column in Enrolled
+
+mysql> alter table enrolled add DoE date;
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+-------------------------------------------------------------------------------
+
+Subtask 3)
+
+# dropping all the constraints
+#necessary to remove them before dropping column YoE
+
+mysql> alter table enrolled drop foreign key enrolled_f1;
+Query OK, 0 rows affected (0.04 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table enrolled drop foreign key enrolled_f2;
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table enrolled drop primary key;
+Query OK, 40 rows affected (0.10 sec)
+Records: 40  Duplicates: 0  Warnings: 0
+
+#removing YoE column
+mysql> alter table enrolled drop yoe;
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+-------------------------------------------------------------------------------
+
+Subtask 4)
+#assigning values of DoB
+
+mysql> update student
+    -> set DoB = '2001-04-17'
+    -> where gender = 'F';
+Query OK, 6 rows affected (0.01 sec)
+Rows matched: 6  Changed: 6  Warnings: 0
+
+mysql> update student
+    -> set DoB = '2001-12-14'
+    -> where gender = 'M';
+Query OK, 7 rows affected (0.01 sec)
+Rows matched: 7  Changed: 7  Warnings: 0
+
+mysql> update student
+    -> set dob = '2001-05-03'
+    -> where sname = 'Harsh';
+
+mysql> update student
+    -> set dob = '2001-12-18'
+    -> where sname = 'Appaji';
+
+mysql> select * from student;
++----------+----------+--------+--------+--------------------+------------+
+| Rollno   | SName    | City   | gender | email              | DoB        |
++----------+----------+--------+--------+--------------------+------------+
+| 1901cs01 | Aditi    | Ggn    | F      | Aditi@gmail.com    | 2001-04-17 |
+| 1901cs02 | Bob      | Indore | M      | Bob@gmail.com      | 2001-12-14 |
+| 1901cs03 | Caty     | Bhopal | F      | Caty@gmail.com     | 2001-04-17 |
+| 1901cs04 | Devin    | Delhi  | M      | Devin@gmail.com    | 2001-12-14 |
+| 1901cs05 | Erin     | Mumbai | F      | Erin@gmail.com     | 2001-04-17 |
+| 1901cs06 | Florida  | Bnglr  | F      | Florida@gmail.com  | 2001-04-17 |
+| 1901cs07 | George   | Surat  | M      | George@gmail.com   | 2001-12-14 |
+| 1901cs08 | Harsh    | Chdgrh | M      | Harsh@gmail.com    | 2001-05-03 |
+| 1901cs09 | Rohan    | Patna  | M      | Rohan@gmail.com    | 2001-12-14 |
+| 1901cs10 | Sushmita | Hisar  | F      | Sushmita@gmail.com | 2001-04-17 |
+| 1901cs11 | Aayushi  | Delhi  | F      | Aakash@gmail.com   | 2001-04-17 |
+| 1901cs12 | Appaji   | Kerela | M      | Appaji@gmail.com   | 2001-12-18 |
+| 1901cs99 | Yash     | Bnglr  | M      | Yash@gmail.com     | 2001-12-14 |
++----------+----------+--------+--------+--------------------+------------+
+
+#updating table enrolled, assigning values of DoE
+
+mysql> update enrolled
+    -> set DoE = '2019-11-01'
+    -> where CCode = 'CS102';
+Query OK, 7 rows affected (0.01 sec)
+Rows matched: 7  Changed: 7  Warnings: 0
+
+mysql> update enrolled
+    -> set DoE = '2020-11-01'
+    -> where CCode like 'CS2%';
+Query OK, 18 rows affected (0.01 sec)
+Rows matched: 18  Changed: 18  Warnings: 0
+
+mysql> update enrolled
+    -> set DoE = '2021-02-01'
+    -> where CCode like 'CS3%';
+Query OK, 7 rows affected (0.01 sec)
+Rows matched: 7  Changed: 7  Warnings: 0
+
+mysql> update enrolled
+    -> set DoE = '2021-09-01'
+    -> where CCode like 'CS5%';
+Query OK, 8 rows affected (0.01 sec)
+Rows matched: 8  Changed: 8  Warnings: 0
+
+mysql> select * from enrolled;
++----------+-------+------------+
+| RollNo   | CCode | DoE        |
++----------+-------+------------+
+| 1901cs01 | CS102 | 2019-11-01 |
+| 1901cs01 | CS201 | 2020-11-01 |
+| 1901cs01 | CS202 | 2020-11-01 |
+| 1901cs01 | CS204 | 2020-11-01 |
+| 1901cs01 | CS210 | 2020-11-01 |
+| 1901cs01 | CS211 | 2020-11-01 |
+| 1901cs01 | CS212 | 2020-11-01 |
+| 1901cs01 | CS215 | 2020-11-01 |
+| 1901cs01 | CS301 | 2021-02-01 |
+| 1901cs01 | CS302 | 2021-02-01 |
+| 1901cs01 | CS303 | 2021-02-01 |
+| 1901CS01 | CS354 | 2021-02-01 |
+| 1901cs01 | CS501 | 2021-09-01 |
+| 1901CS01 | CS502 | 2021-09-01 |
+| 1901CS01 | CS555 | 2021-09-01 |
+| 1901CS01 | CS561 | 2021-09-01 |
+| 1901cs01 | CS599 | 2021-09-01 |
+| 1901cs02 | CS102 | 2019-11-01 |
+| 1901cs02 | CS201 | 2020-11-01 |
+| 1901cs02 | CS202 | 2020-11-01 |
+| 1901cs02 | CS210 | 2020-11-01 |
+| 1901cs02 | CS212 | 2020-11-01 |
+| 1901cs02 | CS301 | 2021-02-01 |
+| 1901cs02 | CS303 | 2021-02-01 |
+| 1901CS02 | CS561 | 2021-09-01 |
+| 1901cs03 | CS102 | 2019-11-01 |
+| 1901cs04 | CS201 | 2020-11-01 |
+| 1901CS04 | CS354 | 2021-02-01 |
+| 1901cs05 | CS202 | 2020-11-01 |
+| 1901CS05 | CS599 | 2021-09-01 |
+| 1901CS06 | CS599 | 2021-09-01 |
+| 1901cs09 | CS102 | 2019-11-01 |
+| 1901cs10 | CS102 | 2019-11-01 |
+| 1901cs10 | CS202 | 2020-11-01 |
+| 1901cs10 | CS204 | 2020-11-01 |
+| 1901cs10 | CS204 | 2020-11-01 |
+| 1901cs10 | CS215 | 2020-11-01 |
+| 1901cs11 | CS102 | 2019-11-01 |
+| 1901cs99 | CS102 | 2019-11-01 |
+| 1901cs99 | CS202 | 2020-11-01 |
++----------+-------+------------+
+40 rows in set (0.00 sec)
+
+-------------------------------------------------------------------------------
+
+Subtask 5)
+# adding foreign keys
+mysql> alter table enrolled
+    -> add constraint enrolled_f1 foreign key (CCode) references course (CCode);
+Query OK, 40 rows affected (0.11 sec)
+Records: 40  Duplicates: 0  Warnings: 0
+
+mysql> alter table enrolled
+    -> add constraint enrolled_f2 foreign key (Rollno) references Student (Rollno);
+Query OK, 40 rows affected (0.10 sec)
+Records: 40  Duplicates: 0  Warnings: 0
+
+# setting the primary key
+mysql> alter table enrolled
+    -> add primary key (Rollno, CCode, DoE);
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+
+
+**********************************************************************************************************
+
+
+TASK B)
+
+Question 1)
+
+# oldest person will have minimum DoB
+
+mysql> select * from student where dob in (
+    -> select min(dob) from student where gender = 'M');
++----------+-------+--------+--------+-----------------+------------+
+| Rollno   | SName | City   | gender | email           | DoB        |
++----------+-------+--------+--------+-----------------+------------+
+| 1901cs08 | Harsh | Chdgrh | M      | Harsh@gmail.com | 2001-05-03 |
++----------+-------+--------+--------+-----------------+------------+
+1 row in set (0.00 sec)
+
+**********************************************************************************************************
+
+Question 2)
+
+#inner query will select the courses having enrollments between the specified date
+#outer query will select the ccodes which are not present in result of inner Query
+
+mysql> select ccode
+    -> from course
+    -> where ccode not in (
+    -> select distinct ccode
+    -> from enrolled
+    -> where doe between '2021-01-01' and curdate());
++-------+
+| ccode |
++-------+
+| CS102 |
+| CS201 |
+| CS202 |
+| CS204 |
+| CS210 |
+| CS211 |
+| CS212 |
+| CS215 |
++-------+
+8 rows in set (0.01 sec)
+
+**********************************************************************************************************
+
+Question 3)
+
+#inner query will find the max number of enrollments for doe with year=2021
+#outer query will select the date with same number of enrollments as returned by the inner query i.e. max with year 2021
+
+mysql> select doe
+    -> from enrolled
+    -> group by doe
+    -> having extract(year from doe)='2021' and
+    -> count(*) = ( select max(cnt) from
+    -> (select count(*) as cnt from enrolled group by doe having extract(year from doe)='2021')t);
++------------+
+| doe        |
++------------+
+| 2021-09-01 |
++------------+
+1 row in set (0.00 sec)
+
+**********************************************************************************************************
+
+Question 4)
+
+#inner query will select ccode with doe month as july (7)
+#outer query will select all details of the courses with the help of ccodes
+
+mysql> select * from course
+    -> where ccode in (
+    -> select distinct ccode from enrolled
+    -> where extract(month from doe) = 7);
++-------+---------------------+--------+----------+
+| CCode | CName               | Credit | ctype    |
++-------+---------------------+--------+----------+
+| CS201 | Crs_with_lessCredit |      4 | Core     |
+| CS211 | Course5             |      6 | Elective |
+| CS301 | Course8             |      6 | Core     |
+| CS501 | Level_5_1           |      6 | Core     |
+| CS561 | Course 11           |      8 | Elective |
++-------+---------------------+--------+----------+
+5 rows in set (0.00 sec)
+
+**********************************************************************************************************
+
+Question 5)
+
+#date_sub would return the date 6 months ago from current date
+#then we would select rollno.s with doe between that date and the current date
+
+mysql> select distinct rollno
+    -> from enrolled
+    -> where doe between date_sub(curdate(), interval 6 month) and curdate();
++----------+
+| rollno   |
++----------+
+| 1901cs01 |
+| 1901cs02 |
+| 1901cs04 |
+| 1901CS05 |
+| 1901CS06 |
++----------+
+5 rows in set (0.00 sec)
+
+**********************************************************************************************************
+
+Question 6)
+
+# we will find the diff of current date and doe
+# students who have enrolled most recently will have the least difference between current date and DoE
+# inner query would find this minimum difference for the specified course
+
+mysql> select rollno
+    -> from enrolled
+    -> where ccode = 'CS354' and datediff(curdate(),doe) = (
+    -> select min(datediff(curdate(), doe)) from enrolled where ccode = 'CS354');
++----------+
+| rollno   |
++----------+
+| 1901CS01 |
+| 1901CS04 |
++----------+
+2 rows in set (0.00 sec)
+
+**********************************************************************************************************
+
+Question 7)
+
+#making necessary changes to the tables
+mysql> insert into course values ('CS355', 'Database Lab', 6, 'Core');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into enrolled values('1901CS04', 'CS355', '2020-07-01');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> update enrolled
+    -> set doe = '2020-01-01'
+    -> where ccode = 'CS354';
+Query OK, 2 rows affected (0.01 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+# we are performing natural join on two query results namely alias1 and alias2
+# the result of natural join would contain three columns, rollno, cs354_date and cs355_date.
+# the required rollno.s would have cs355_date > cs354_date
+
+mysql> select sname from student where rollno in (
+    -> select rollno from (
+    -> select rollno, doe as cs354_date from enrolled where ccode = 'CS354' and extract(year from doe)=2020)alias1
+    -> natural join
+    -> (select rollno, doe as cs355_date from enrolled where ccode = 'CS355' and extract(year from doe)=2020)alias2
+    -> where datediff(cs355_date,cs354_date) > 0 );
++-------+
+| sname |
++-------+
+| Devin |
++-------+
+1 row in set (0.01 sec)
+
+**********************************************************************************************************
+
+Question 8)
+
+# creating a temp view called course_btw_dates to select the entries from enrolled with doe as specified in ques
+
+mysql> create view course_btw_dates as
+    -> select * from enrolled where doe between '2021-01-01' and '2021-06-30';
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> select * from course_btw_dates;
++----------+-------+------------+
+| RollNo   | CCode | DoE        |
++----------+-------+------------+
+| 1901cs01 | CS302 | 2021-02-01 |
+| 1901cs01 | CS303 | 2021-02-01 |
+| 1901cs02 | CS303 | 2021-02-01 |
++----------+-------+------------+
+3 rows in set (0.00 sec)
+
+# now we are simply doing a max query on the above view by grouping the entries by ccode
+
+mysql> select * from course
+    -> where ccode in
+    -> ( select ccode from course_btw_dates
+    -> group by ccode
+    -> having count(*) =
+    -> (select max(cnt) from (select count(*) as cnt from course_btw_dates
+    -> group by ccode)t));
++-------+----------+--------+-------+
+| CCode | CName    | Credit | ctype |
++-------+----------+--------+-------+
+| CS303 | Course10 |      8 | Core  |
++-------+----------+--------+-------+
+1 row in set (0.01 sec)
+
+**********************************************************************************************************
+
+Question 9)
+
+# datediff(d1,d2) func gives us the difference in days between d1 and d2
+
+mysql> create view stud_age as
+    -> select rollno, datediff(curdate(),dob) as ageindays
+    -> from student;
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> select * from stud_age;
++----------+-----------+
+| rollno   | ageindays |
++----------+-----------+
+| 1901cs01 |      7442 |
+| 1901cs02 |      7201 |
+| 1901cs03 |      7442 |
+| 1901cs04 |      7201 |
+| 1901cs05 |      7442 |
+| 1901cs06 |      7442 |
+| 1901cs07 |      7201 |
+| 1901cs08 |      7426 |
+| 1901cs09 |      7201 |
+| 1901cs10 |      7442 |
+| 1901cs11 |      7442 |
+| 1901cs12 |      7197 |
+| 1901cs99 |      7201 |
++----------+-----------+
+13 rows in set (0.01 sec)
+
+**********************************************************************************************************
+
+
+Question 10)
+
+#inserting some values in enrolled
+
+mysql> insert into enrolled values ('1901CS02', 'CS354', '2019-06-09'), ('1901CS06', 'CS354', '2018-06-09'), ('1901CS02', 'CS354', '2021-06-09'), ('1901CS10', 'CS354', '2021-06-01');
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+# first selecting entires with ccode as cs354
+# then grouping these entries on the basis of year, with min year as 2018
+# ordering the result in ascending order of year
+
+mysql> create view CS354_Enrollment as
+    -> select extract(year from doe) as year, count(*) as cnt from
+    -> (select * from enrolled where ccode = 'CS354')t
+    -> group by year having year >= 2018
+    -> order by year;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from CS354_Enrollment;
++------+-----+
+| year | cnt |
++------+-----+
+| 2018 |   1 |
+| 2019 |   1 |
+| 2020 |   2 |
+| 2021 |   2 |
++------+-----+
+4 rows in set (0.01 sec)
+
+**********************************************************************************************************

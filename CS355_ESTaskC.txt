@@ -1,0 +1,111 @@
+NAME: ADITI GOEL
+ROLL NO.: 1901CS04
+
+TASK C
+
+Question 1:
+
+mysql> delimiter $$
+mysql> create function visitedAllPlace(db_id varchar(10),db_name varchar(30))
+    -> returns varchar(4)
+    -> deterministic
+    -> begin
+    -> declare cnt int;
+    -> declare ans varchar(4);
+    -> select count(distinct(customer.customer_place)) into cnt from customer,orderlab
+    -> where customer.customer_id = orderlab.customer_id and db_id = orderlab.db_id;
+    -> if cnt = 6 then
+    -> set ans = "Yes";
+    -> else set ans = "No";
+    -> end if;
+    -> return ans;
+    -> end $$
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> select visitedAllPlace('DB10', 'Harish');
++-----------------------------------+
+| visitedAllPlace('DB10', 'Harish') |
++-----------------------------------+
+| No                                |
++-----------------------------------+
+1 row in set (0.01 sec)
+
+************************************************************************************************************************
+
+Question 2:
+
+mysql> create function calprice( id1_order varchar(10),  id_customer varchar(10))
+    -> returns int
+    -> deterministic
+    -> begin
+    -> declare cost int;
+    -> select price into cost from orderlab where order_id=id1_order and customer_id=id_customer;
+    -> declare place1 varchar(10);
+    -> select customer_place into place1 from customer where customer_id=id_customer;
+    -> if( cost<500 and place1="Bandra") then
+    -> update orderlab set price=cost+50 where customer_id=id_customer;
+    -> elseif (cost<500 and place1="Andheri") then
+    -> update orderlab set price=cost+60 where customer_id=id_customer;
+    -> elseif (cost<500 and place1="South Mumbai") then
+    -> update orderlab set price=cost+70 where customer_id=id_customer;
+    -> elseif (cost<500 and place1="Juhu") then
+    -> update orderlab set price=cost+80 where customer_id=id_customer;
+    -> elseif (cost<500 and place1="Navi Mumbai") then
+    -> update orderlab set price=cost+90 where customer_id=id_customer;
+    -> elseif (cost<500 and place1="Goregaon") then
+    -> update orderlab set price=cost+100 where customer_id=id_customer;
+    -> else
+    -> return 1;
+    -> endif;
+    -> end$$
+
+************************************************************************************************************************
+
+Question 3:
+mysql> create procedure purchaseFrequency(in place varchar(20))
+    -> begin
+    -> declare cnt, diff int;
+    -> select count(*) into cnt from customer where customer_place = place;
+    -> select datediff(curdate(),order_date) into diff from orderlab order by order_date asc limit 1;
+    -> select cnt / diff;
+    -> end$$
+Query OK, 0 rows affected (0.02 sec)
+
+************************************************************************************************************************
+
+Question 4:
+
+mysql> alter table delivery_boy add average_rating int;
+Query OK, 0 rows affected (0.04 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> Delimiter $$
+
+mysql> Create trigger after_insert_rating after insert on orderlab for each row
+    -> Begin
+    -> Declare sum_rating int;
+    -> Declare count_rating int;
+    -> Select sum(order_rate), count(*) into sum_rating, count_rating from orderlab where db_id=new.db_id;
+    -> Update delivery_boy set average_rating = sum_rating/count_rating where db_id = new.db_id;
+    -> End $$
+Query OK, 0 rows affected (0.02 sec)
+
+************************************************************************************************************************
+
+Question 5:
+
+mysql> alter table delivery_boy add average_tip int;
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> Delimiter $$
+mysql> Create trigger after_insert_tip after insert on orderlab for each row
+    -> Begin
+    -> Declare sum_tip int;
+    -> Declare count_tip int;
+    -> Select sum(order_tip), count(*) into sum_tip, count_tip from orderlab where db_id=new.db_id;
+    -> Update delivery_boy set average_tip = sum_tip/count_tip where db_id = new.db_id;
+    -> End $$
+Query OK, 0 rows affected (0.02 sec)
+
+************************************************************************************************************************

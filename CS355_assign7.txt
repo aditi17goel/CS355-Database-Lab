@@ -1,0 +1,222 @@
+
+Question 1)
+
+// Add column
+mysql> alter table student add status varchar(20);
+Query OK, 0 rows affected (0.18 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> select * from student;
++----------+-----------+----------+--------+---------------------+------------+--------+
+| Rollno   | SName     | City     | gender | email               | DoB        | status |
++----------+-----------+----------+--------+---------------------+------------+--------+
+| 1901cs01 | Aditi     | Ggn      | F      | Aditi@gmail.com     | 2001-04-17 | NULL   |
+| 1901cs02 | Bob       | Indore   | M      | Bob@gmail.com       | 2001-12-14 | NULL   |
+| 1901cs03 | Caty      | Bhopal   | F      | Caty@gmail.com      | 2001-04-17 | NULL   |
+| 1901cs04 | Devin     | Delhi    | M      | Devin@gmail.com     | 1999-01-01 | NULL   |
+| 1901cs05 | Erin      | Mumbai   | F      | Erin@gmail.com      | 2001-04-17 | NULL   |
+| 1901cs06 | Florida   | Bnglr    | F      | Florida@gmail.com   | 1999-01-01 | NULL   |
+| 1901cs07 | George    | Surat    | M      | George@gmail.com    | 2001-12-14 | NULL   |
+| 1901cs08 | Harsh     | Chdgrh   | M      | Harsh@gmail.com     | 2001-05-03 | NULL   |
+| 1901cs09 | Rohan     | Patna    | M      | Rohan@gmail.com     | 2001-12-14 | NULL   |
+| 1901cs10 | Sushmita  | Hisar    | F      | Sushmita@gmail.com  | 2001-04-17 | NULL   |
+| 1901cs11 | Aayushi   | Delhi    | F      | Aakash@gmail.com    | 1999-01-01 | NULL   |
+| 1901cs12 | Appaji    | Kerela   | M      | Appaji@gmail.com    | 2001-12-18 | NULL   |
+| 1901cs21 | Kalpana   | Hisar    | F      | Kalpana@gmail.com   | 2002-01-18 | NULL   |
+| 1901cs22 | Aathira   | Kochi    | F      | Aathira@gmail.com   | 2001-01-12 | NULL   |
+| 1901cs23 | Kiran     | Bhiwadi  | F      | Kiran@gmail.com     | 2002-02-11 | NULL   |
+| 1901cs25 | Priyaansi | Bharuch  | F      | Priyaansi@gmail.com | 2001-03-18 | NULL   |
+| 1901cs26 | Parishi   | Indore   | F      | Parishi@gmail.com   | 2002-01-18 | NULL   |
+| 1901cs27 | Apoorva   | Kanpur   | F      | Apoorva@gmail.com   | 2001-01-14 | NULL   |
+| 1901cs29 | Prachi    | Ggn      | F      | Prachi@gmail.com    | 2001-03-18 | NULL   |
+| 1901cs30 | Adarsh    | Siliguri | M      | Adarsh@gmail.com    | 2001-10-04 | NULL   |
+| 1901cs31 | Adda      | Dwarka   | F      | adda@gmailcom       | 2000-01-18 | NULL   |
+| 1901cs99 | Yash      | Bnglr    | M      | Yash@gmail.com      | 1999-01-01 | NULL   |
++----------+-----------+----------+--------+---------------------+------------+--------+
+22 rows in set (0.01 sec)
+
+// Create the procedure
+
+mysql> delimiter $$
+mysql> create procedure procStdStatus(stdRollno char(8))
+    -> begin
+    -> declare stdStatus varchar(20);
+    -> declare age int;
+    -> select FLOOR(DATEDIFF(curdate(),dob)/365.4) into age
+    -> from student
+    -> where rollno = stdRollno;
+    -> if age>21 then
+    -> set stdStatus = 'Senior';
+    -> else
+    -> set stdStatus = 'Junior';
+    -> end if;
+    -> update student
+    -> set status = stdStatus
+    -> where rollno = stdRollno;
+    -> end $$
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> delimiter ;
+mysql> delimiter $$
+
+// Create another procedure to call for each row
+
+mysql> CREATE PROCEDURE updateStudentStatus()
+    -> BEGIN
+    -> DECLARE numberOfStudents, i int DEFAULT 0;
+    -> DECLARE _RollNo char(8);
+    -> SELECT COUNT(*) INTO numberOfStudents
+    -> FROM Student;
+    -> SET i = 0;
+    -> WHILE i < numberOfStudents DO
+    -> SELECT RollNo INTO _Rollno FROM Student LIMIT i, 1;
+    -> CALL procStdStatus(_Rollno);
+    -> SET i = i + 1;
+    -> END WHILE;
+    -> END$$
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> delimiter ;
+
+mysql> call updateStudentStatus();
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> select * from student;
++----------+-----------+----------+--------+---------------------+------------+--------+
+| Rollno   | SName     | City     | gender | email               | DoB        | status |
++----------+-----------+----------+--------+---------------------+------------+--------+
+| 1901cs01 | Aditi     | Ggn      | F      | Aditi@gmail.com     | 2001-04-17 | Junior |
+| 1901cs02 | Bob       | Indore   | M      | Bob@gmail.com       | 2001-12-14 | Junior |
+| 1901cs03 | Caty      | Bhopal   | F      | Caty@gmail.com      | 2001-04-17 | Junior |
+| 1901cs04 | Devin     | Delhi    | M      | Devin@gmail.com     | 1999-01-01 | Senior |
+| 1901cs05 | Erin      | Mumbai   | F      | Erin@gmail.com      | 2001-04-17 | Junior |
+| 1901cs06 | Florida   | Bnglr    | F      | Florida@gmail.com   | 1999-01-01 | Senior |
+| 1901cs07 | George    | Surat    | M      | George@gmail.com    | 2001-12-14 | Junior |
+| 1901cs08 | Harsh     | Chdgrh   | M      | Harsh@gmail.com     | 2001-05-03 | Junior |
+| 1901cs09 | Rohan     | Patna    | M      | Rohan@gmail.com     | 2001-12-14 | Junior |
+| 1901cs10 | Sushmita  | Hisar    | F      | Sushmita@gmail.com  | 2001-04-17 | Junior |
+| 1901cs11 | Aayushi   | Delhi    | F      | Aakash@gmail.com    | 1999-01-01 | Senior |
+| 1901cs12 | Appaji    | Kerela   | M      | Appaji@gmail.com    | 2001-12-18 | Junior |
+| 1901cs21 | Kalpana   | Hisar    | F      | Kalpana@gmail.com   | 2002-01-18 | Junior |
+| 1901cs22 | Aathira   | Kochi    | F      | Aathira@gmail.com   | 2001-01-12 | Junior |
+| 1901cs23 | Kiran     | Bhiwadi  | F      | Kiran@gmail.com     | 2002-02-11 | Junior |
+| 1901cs25 | Priyaansi | Bharuch  | F      | Priyaansi@gmail.com | 2001-03-18 | Junior |
+| 1901cs26 | Parishi   | Indore   | F      | Parishi@gmail.com   | 2002-01-18 | Junior |
+| 1901cs27 | Apoorva   | Kanpur   | F      | Apoorva@gmail.com   | 2001-01-14 | Junior |
+| 1901cs29 | Prachi    | Ggn      | F      | Prachi@gmail.com    | 2001-03-18 | Junior |
+| 1901cs30 | Adarsh    | Siliguri | M      | Adarsh@gmail.com    | 2001-10-04 | Junior |
+| 1901cs31 | Adda      | Dwarka   | F      | adda@gmailcom       | 2000-01-18 | Junior |
+| 1901cs99 | Yash      | Bnglr    | M      | Yash@gmail.com      | 1999-01-01 | Senior |
++----------+-----------+----------+--------+---------------------+------------+--------+
+22 rows in set (0.00 sec)
+
+
+*********************************************************************************************************
+
+Question 2)
+
+// Create the procedure
+mysql> delimiter $$
+mysql> CREATE PROCEDURE procCourseInsert(IN ccode_i char(5), IN cname_i varchar(20), IN credit_i smallint, IN ctype_i varchar(20))
+    -> BEGIN
+    -> IF NOT EXISTS (SELECT * FROM Course WHERE CCode = ccode_i) THEN
+    -> INSERT INTO course VALUES(ccode_i, cname_i, credit_i, ctype_i);
+    -> END IF;
+    -> END$$
+Query OK, 0 rows affected (0.01 sec)
+
+// Testing procedure
+mysql> call procCourseInsert('CS222','Test Course', 4, 'Elective');
+    -> $$
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from course;
++-------+---------------------+--------+---------------+
+| CCode | CName               | Credit | ctype         |
++-------+---------------------+--------+---------------+
+| CS102 | Crs_with_lessCredit |      4 | Open Elective |
+| CS201 | Crs_with_lessCredit |      4 | Core          |
+| CS202 | Course3             |      6 | Elective      |
+| CS204 | Algo                |      8 | Core          |
+| CS210 | Crs_with_lessCredit |      4 | Core          |
+| CS211 | Course5             |      6 | Elective      |
+| CS212 | Course6             |      8 | Elective      |
+| CS215 | Course7             |      8 | Core          |
+| CS222 | Test Course         |      4 | Elective      |
+| CS301 | Course8             |      6 | Core          |
+| CS302 | Crs_with_lessCredit |      4 | Core          |
+| CS303 | Course10            |      8 | Core          |
+| CS354 | Database Systems    |      6 | Open Elective |
+| CS355 | Database Lab        |      6 | Core          |
+| CS501 | Level_5_1           |      6 | Core          |
+| CS502 | Level_5_2           |      8 | Open Elective |
+| CS555 | Course 12           |      8 | Elective      |
+| CS561 | Course 11           |      8 | Elective      |
+| CS599 | Course 13           |      8 | Core          |
++-------+---------------------+--------+---------------+
+19 rows in set (0.00 sec)
+
+
+*************************************************************************************
+
+Question 3)
+
+// Define procedure
+mysql> delimiter $$
+mysql> CREATE PROCEDURE procEnrolledCourseDate(IN dt date, IN code char(5))
+    -> BEGIN
+    -> SELECT * FROM student WHERE rollno IN (
+    -> SELECT distinct rollno
+    -> FROM enrolled
+    -> WHERE ccode = code
+    -> AND DATEDIFF(dt, DoE) >= 0 );
+    -> END$$
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> delimiter ;
+
+// Testing procedure
+mysql> call procEnrolledCourseDate('2019-11-01', 'CS102');
++----------+----------+--------+--------+--------------------+------------+--------+
+| Rollno   | SName    | City   | gender | email              | DoB        | status |
++----------+----------+--------+--------+--------------------+------------+--------+
+| 1901cs01 | Aditi    | Ggn    | F      | Aditi@gmail.com    | 2001-04-17 | Junior |
+| 1901cs02 | Bob      | Indore | M      | Bob@gmail.com      | 2001-12-14 | Junior |
+| 1901cs03 | Caty     | Bhopal | F      | Caty@gmail.com     | 2001-04-17 | Junior |
+| 1901cs09 | Rohan    | Patna  | M      | Rohan@gmail.com    | 2001-12-14 | Junior |
+| 1901cs10 | Sushmita | Hisar  | F      | Sushmita@gmail.com | 2001-04-17 | Junior |
+| 1901cs11 | Aayushi  | Delhi  | F      | Aakash@gmail.com   | 1999-01-01 | Senior |
+| 1901cs99 | Yash     | Bnglr  | M      | Yash@gmail.com     | 1999-01-01 | Senior |
++----------+----------+--------+--------+--------------------+------------+--------+
+7 rows in set (0.02 sec)
+
+Query OK, 0 rows affected (0.04 sec)
+
+*************************************************************************************
+
+Question 4)
+
+// Create Function
+mysql> delimiter $$
+mysql> CREATE FUNCTION funEnrolledGenString(roll char(8), code char(5))
+    -> RETURNS CHAR(11)
+    -> DETERMINISTIC
+    -> BEGIN
+    -> DECLARE dob_date date;
+    -> SET dob_date = (SELECT DoB FROM Student WHERE Rollno = roll);
+    -> RETURN CONCAT(SUBSTR(roll, 5, 4), RIGHT(code, 3), DATE_FORMAT(dob_date, '%d%m'));
+    -> END $$
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> delimiter ;
+
+
+// Testing Function
+
+mysql> select funEnrolledGenString('1901CS04', 'CS222');
++-------------------------------------------+
+| funEnrolledGenString('1901CS04', 'CS222') |
++-------------------------------------------+
+| CS042220101                               |
++-------------------------------------------+
+1 row in set (0.00 sec)

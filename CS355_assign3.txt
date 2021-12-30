@@ -1,0 +1,295 @@
+Name: Aditi Goel
+Rollno: 1901CS04
+Assignment 3
+
+
+-----------------------------------------------------------------------------------
+
+Question 1A)
+
+mysql> alter table course add ctype varchar(30);
+
+mysql> alter table student add email varchar(30);
+mysql> alter table student
+    -> add constraint uniqueemail unique(email);
+
+
+
+-----------------------------------------------------------------------------------
+
+Question 1B)
+mysql> update course set ctype ='Core';
+mysql> update course set ctype = 'Open Elective'  where CCode = 'CS102' or CCode = 'CS502' or CCode = 'CS354';
+mysql> update course set ctype = 'Elective'  where CCode = 'CS211' or CCode = 'CS212' or CCode = 'CS202';
+
+mysql> select * from course;
++-------+---------------------+--------+---------------+
+| CCode | CName               | Credit | ctype         |
++-------+---------------------+--------+---------------+
+| CS102 | Crs_with_lessCredit |      4 | Open Elective |
+| CS201 | Crs_with_lessCredit |      4 | Core          |
+| CS202 | Course3             |      6 | Core          |
+| CS204 | Algo                |      8 | Core          |
+| CS210 | Crs_with_lessCredit |      4 | Core          |
+| CS211 | Course5             |      6 | Core          |
+| CS212 | Course6             |      8 | Core          |
+| CS215 | Course7             |      8 | Core          |
+| CS301 | Course8             |      6 | Core          |
+| CS302 | Crs_with_lessCredit |      4 | Core          |
+| CS303 | Course10            |      8 | Core          |
+| CS354 | Database Systems    |      6 | Open Elective |
+| CS501 | Level_5_1           |      6 | Core          |
+| CS502 | Level_5_2           |      8 | Open Elective |
++-------+---------------------+--------+---------------+
+
+
+
+mysql> update student  set email = concat(sname,'@gmail.com');
+
+mysql> select * from student;
++----------+----------+--------+--------+--------------------+
+| Rollno   | SName    | City   | gender | email              |
++----------+----------+--------+--------+--------------------+
+| 1901cs01 | Aditi    | Ggn    | F      | Aditi@gmail.com    |
+| 1901cs02 | Bob      | Indore | M      | Bob@gmail.com      |
+| 1901cs03 | Caty     | Bhopal | F      | Caty@gmail.com     |
+| 1901cs04 | Devin    | Delhi  | M      | Devin@gmail.com    |
+| 1901cs05 | Erin     | Mumbai | F      | Erin@gmail.com     |
+| 1901cs06 | Florida  | Bnglr  | F      | Florida@gmail.com  |
+| 1901cs07 | George   | Surat  | M      | George@gmail.com   |
+| 1901cs08 | Harsh    | Chdgrh | M      | Harsh@gmail.com    |
+| 1901cs09 | Rohan    | Patna  | M      | Rohan@gmail.com    |
+| 1901cs10 | Sushmita | Hisar  | F      | Sushmita@gmail.com |
+| 1901cs11 | Aakash   | Delhi  | M      | Aakash@gmail.com   |
+| 1901cs12 | Appaji   | Kerela | M      | Appaji@gmail.com   |
+| 1901cs99 | Yash     | Bnglr  | M      | Yash@gmail.com     |
++----------+----------+--------+--------+--------------------+
+
+
+
+-----------------------------------------------------------------------------------
+
+Question 2A)
+
+mysql> select sname from student where email like '%gmail.com';
++----------+
+| sname    |
++----------+
+| Aditi    |
+| Bob      |
+| Caty     |
+| Devin    |
+| Erin     |
+| Florida  |
+| George   |
+| Harsh    |
+| Rohan    |
+| Sushmita |
+| Aakash   |
+| Appaji   |
+| Yash     |
++----------+
+
+
+-----------------------------------------------------------------------------------
+
+Question 2B)
+
+#Altering course table for required queries
+mysql> insert into course values ('CS561', 'Course 11', 8, 'Elective');
+mysql> insert into course values ('CS555', 'Course 12', 8, 'Elective');
+
+mysql> select* from course;
++-------+---------------------+--------+---------------+
+| CCode | CName               | Credit | ctype         |
++-------+---------------------+--------+---------------+
+| CS102 | Crs_with_lessCredit |      4 | Open Elective |
+| CS201 | Crs_with_lessCredit |      4 | Core          |
+| CS202 | Course3             |      6 | Elective      |
+| CS204 | Algo                |      8 | Core          |
+| CS210 | Crs_with_lessCredit |      4 | Core          |
+| CS211 | Course5             |      6 | Elective      |
+| CS212 | Course6             |      8 | Elective      |
+| CS215 | Course7             |      8 | Core          |
+| CS301 | Course8             |      6 | Core          |
+| CS302 | Crs_with_lessCredit |      4 | Core          |
+| CS303 | Course10            |      8 | Core          |
+| CS354 | Database Systems    |      6 | Open Elective |
+| CS501 | Level_5_1           |      6 | Core          |
+| CS502 | Level_5_2           |      8 | Open Elective |
+| CS555 | Course 12           |      8 | Elective      |
+| CS561 | Course 11           |      8 | Elective      |
++-------+---------------------+--------+---------------+
+
+#Altering Enrolled table for required queries
+mysql> insert into enrolled values ('1901CS01', 'CS561', '2021');
+mysql> insert into enrolled values ('1901CS02', 'CS561', '2021');
+
+
+mysql> select sname from student, (select rollno from enrolled where ccode = 'CS561' and rollno not in  (select rollno from enrolled where ccode = 'CS555'))temp where student.rollno = temp.rollno;
+
+//or
+
+mysql> select sname
+    -> from student
+    -> where rollno = (
+    -> select rollno from enrolled
+    -> where ccode = 'CS561' and
+    -> rollno not in (
+    -> select rollno
+    -> from enrolled
+    -> where ccode = 'CS555'));
++-------+
+| sname |
++-------+
+| Aditi |
+| Bob   |
++-------+
+
+
+
+-----------------------------------------------------------------------------------
+
+Question 2C)
+
+mysql> select rollno from (select * from enrolled where YoE = 2020)t group by rollno having count(*) > 4;
++----------+
+| rollno   |
++----------+
+| 1901cs01 |
+| 1901cs10 |
++----------+
+
+
+-----------------------------------------------------------------------------------
+
+
+Question 2D)
+
+#Making required changes in the database
+mysql> insert into course values ('CS599', 'Course 13', 8, 'Core');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into enrolled values ('1901CS06', 'CS599', '2021');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into enrolled values ('1901CS05', 'CS599', '2020');
+Query OK, 1 row affected (0.01 sec)
+
+
+mysql> select count(*) as count from  (select distinct rollno from enrolled where yoe between 2019 and 2021 and ccode = 'CS599')t;
++-------+
+| count |
++-------+
+|     2 |
++-------+
+
+
+-----------------------------------------------------------------------------------
+
+
+
+Question 2E)
+
+mysql> select course.ccode, count(rollno) as 'Number of enrolled students' from enrolled,course where course.ctype = 'elective' and enrolled.ccode = course.ccode and enrolled.yoe = 2021;
++-------+-----------------------------+
+| ccode | Number of enrolled students |
++-------+-----------------------------+
+| CS561 |                           2 |
++-------+-----------------------------+
+
+
+
+-----------------------------------------------------------------------------------
+
+
+Question 2F)
+
+mysql> select city from student
+    -> group by city
+    -> having count(*) = (select max(cnt) from
+    -> (select count(*) as cnt from student group by city) t);
++-------+
+| city  |
++-------+
+| Delhi |
+| Bnglr |
++-------+
+
+
+
+-----------------------------------------------------------------------------------
+
+
+Question 2G)
+
+mysql> select rollno from (select rollno,sum(credit) as total from enrolled inner join course on course.ccode = enrolled.ccode group by rollno having total = 20)t;
++----------+
+| rollno   |
++----------+
+| 1901cs01 |
+| 1901cs02 |
+| 1901cs10 |
++----------+
+
+
+
+-----------------------------------------------------------------------------------
+
+
+Question 2H)
+
+#Making required changes to  database
+mysql> update student set gender = 'F',Sname = 'Aayushi' where Rollno = '1901cs11';
+mysql> insert into enrolled values ('1901cs11', 'CS102', 2019);
+
+mysql> select ccode,count(enrolled.rollno) as count from enrolled, student where student.rollno = enrolled.rollno and gender = 'F' and city = 'Delhi'
+    -> group by ccode having count(enrolled.rollno) =
+    -> (select max(cnt) from
+    -> (select ccode,count(enrolled.rollno) as cnt from enrolled , student
+    -> where student.rollno = enrolled.rollno and gender = 'F' and city = 'Delhi' group by ccode) as t );
++-------+-------+
+| ccode | count |
++-------+-------+
+| CS102 |     1 |
++-------+-------+
+
+
+-----------------------------------------------------------------------------------
+
+
+Question 2I)
+mysql> select ccode from course
+    -> where credit = (select max(credit) from course);
++-------+
+| ccode |
++-------+
+| CS204 |
+| CS212 |
+| CS215 |
+| CS303 |
+| CS502 |
+| CS555 |
+| CS561 |
+| CS599 |
++-------+
+
+
+-----------------------------------------------------------------------------------
+
+
+Question 2J)
+
+mysql> select *from course where ccode in
+    -> (select ccode from enrolled group by ccode having count(*) =
+    -> (select min(cnt) from
+    -> (select count(*) as cnt from enrolled group by ccode) as t1 ) );
++-------+---------------------+--------+----------+
+| CCode | CName               | Credit | ctype    |
++-------+---------------------+--------+----------+
+| CS211 | Course5             |      6 | Elective |
+| CS302 | Crs_with_lessCredit |      4 | Core     |
++-------+---------------------+--------+----------+
+
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------

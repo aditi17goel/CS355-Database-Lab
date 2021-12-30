@@ -1,0 +1,251 @@
+NAME: ADITI GOEL
+ROLL NO.: 1901CS04
+
+TASK B
+
+Question 1:
+
+//inserting relevant entry
+
+mysql> insert into customer values ('1901CS11', 'Ashok', 'Bandra', 'ashok@yahoo.com');
+Query OK, 1 row affected (0.01 sec)
+
+Query:
+mysql> select * from customer where Customer_Place = 'Bandra' AND NOT SUBSTRING(Email_ID, LOCATE('@', Email_ID) + 1) = 'gmail.com';
++-------------+---------------+----------------+-----------------+
+| Customer_ID | Customer_Name | Customer_Place | Email_ID        |
++-------------+---------------+----------------+-----------------+
+| 1901CS11    | Ashok         | Bandra         | ashok@yahoo.com |
++-------------+---------------+----------------+-----------------+
+1 row in set (0.01 sec)
+
+************************************************************************************************************************
+
+Question 2:
+
+//inserting relevant entries
+
+mysql> insert into orderlab values ( 'OD16', '1901CS06', 'DB10', '2021/08/12', 145, 10, 3);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orderlab values ( 'OD17', '1901CS06', 'DB10', '2021/08/12', 145, 10, 3);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orderlab values ( 'OD18', '1901CS05', 'DB10', '2021/08/12', 145, 10, 3);
+Query OK, 1 row affected (0.01 sec)
+
+Query:
+
+mysql> SELECT Customer_Place, COUNT(*) AS Total_Count FROM orderlab
+    -> INNER JOIN Customer ON orderlab.Customer_ID = Customer.Customer_ID
+    -> WHERE (SELECT EXTRACT(MONTH FROM orderlab.Order_Date)) = 8
+    -> AND (SELECT EXTRACT(YEAR FROM orderlab.Order_Date)) = 2021
+    -> GROUP BY Customer_Place
+    -> HAVING Total_Count = (
+    -> SELECT MAX(Countdb.Place_Count) FROM (SELECT COUNT(*) AS Place_Count FROM orderlab
+    -> INNER JOIN Customer ON orderlab.Customer_ID = Customer.Customer_ID
+    -> WHERE (SELECT EXTRACT(MONTH FROM orderlab.Order_Date)) = 8
+    -> AND (SELECT EXTRACT(YEAR FROM orderlab.Order_Date)) = 2021
+    -> GROUP BY Customer_Place) AS Countdb );
++----------------+-------------+
+| Customer_Place | Total_Count |
++----------------+-------------+
+| Navi Mumbai    |           2 |
++----------------+-------------+
+1 row in set (0.00 sec)
+
+
+************************************************************************************************************************
+
+Question 3:
+Query:
+mysql> select delivery_boy.db_id, delivery_boy.db_name, delivery_boy.db_dob, sum(orderlab.order_tip) as total from delivery_boy inner join orderlab on orderlab.db_id = delivery_boy.db_id where YEAR(orderlab.order_date ) = 2021 group by delivery_boy.db_id order by sum(orderlab.order_tip) desc limit 1;
++-------+---------+------------+-------+
+| db_id | db_name | db_dob     | total |
++-------+---------+------------+-------+
+| DB10  | Harish  | 1998-11-03 |    40 |
++-------+---------+------------+-------+
+1 row in set (0.00 sec)
+
+************************************************************************************************************************
+
+Question 4:
+
+mysql> select * from delivery_boy where datediff(sysdate(), db_DOB) =  ( select min(datediff(sysdate(), db_DOB)) from delivery_boy where db_ID in (select db_ID from orderlab group by db_ID having count(order_ID) >= 10 )) ;
+Empty set (0.01 sec)
+
+************************************************************************************************************************
+
+Question 5:
+
+mysql> create view Food_sales as
+    -> select customer_place as Place_name, sum(price) as Total_cost, extract(year from order_date) as Year
+    -> from orderlab, customer
+    -> where customer.customer_id = orderlab.customer_id
+    -> group by customer.customer_id, customer_place;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> select * from Food_sales;
++--------------+------------+------+
+| Place_name   | Total_cost | Year |
++--------------+------------+------+
+| Bandra       |        345 | 2021 |
+| Andheri      |       2435 | 2021 |
+| South Mumbai |        382 | 2020 |
+| Bandra       |        512 | 2021 |
+| Juhu         |        334 | 2021 |
+| Navi Mumbai  |       1125 | 2021 |
+| Goregaon     |       2245 | 2021 |
+| South Mumbai |         55 | 2021 |
+| Andheri      |        567 | 2021 |
++--------------+------------+------+
+9 rows in set (0.01 sec)
+************************************************************************************************************************
+
+Question 6:
+
+//inserting relevant entries
+
+mysql> insert into delivery_boy values ('DB15', 'Akash Singh Yadav', '2000/01/01' );
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM delivery_boy
+    -> WHERE DB_Name LIKE '_% _% _%' AND
+    -> ((DB_Name LIKE '%a%e%') OR (DB_Name LIKE '%a%i%')
+    -> OR (DB_Name LIKE '%a%o%') OR (DB_Name LIKE '%a%u%')
+    -> OR (DB_Name LIKE '%e%i%') OR (DB_Name LIKE '%e%o%')
+    -> OR (DB_Name LIKE '%e%u%') OR (DB_Name LIKE '%i%o%')
+    -> OR (DB_Name LIKE '%i%u%') OR (DB_Name LIKE '%o%u%'));
++-------+-------------------+------------+
+| DB_ID | DB_Name           | DB_DOB     |
++-------+-------------------+------------+
+| DB15  | Akash Singh Yadav | 2000-01-01 |
++-------+-------------------+------------+
+1 row in set (0.00 sec)
+
+************************************************************************************************************************
+
+Question 7:
+
+//inserting relevant entries
+
+mysql> insert into delivery_boy values ('DB13', 'Dinesh', '1999/02/07');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orderlab values ( 'OD11', '1901CS06', 'DB13', '2021/11/12', 545, 10, 3);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into delivery_boy values ('DB14', 'Avinash', '1999/12/07');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orderlab values ( 'OD12', '1901CS09', 'DB14', '2021/06/06', 55, 10, 5);
+Query OK, 1 row affected (0.01 sec)
+
+Query:
+mysql> select count(*) as num_orders from orderlab, customer, delivery_boy
+    -> where orderlab.Customer_ID = customer.Customer_ID and orderlab.DB_ID = delivery_boy.DB_ID and customer.Customer_Name = delivery_boy.DB_Name;
++------------+
+| num_orders |
++------------+
+|          2 |
++------------+
+1 row in set (0.01 sec)
+
+************************************************************************************************************************
+
+Question 8:
+
+mysql> select datediff(max(db_dob), min(db_dob))/365.4 as age_diff_in_years from delivery_boy;
++-------------------+
+| age_diff_in_years |
++-------------------+
+|           13.6398 |
++-------------------+
+1 row in set (0.00 sec)
+
+************************************************************************************************************************
+
+Question 9:
+
+//inserting relevant entries
+
+mysql> insert into orderlab values ( 'OD13', '1901CS06', 'DB10', '2020/11/12', 145, 10, 3);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orderlab values ( 'OD14', '1901CS03', 'DB10', '2020/11/02', 145, 10, 3);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orderlab values ( 'OD15', '1901CS03', 'DB10', '2019/11/02', 237, 11, 4);
+Query OK, 1 row affected (0.01 sec)
+
+Query:
+
+mysql> select year(Order_Date)
+    -> from orderlab
+    -> group by year(Order_Date)
+    -> having sum(Order_tip) = (
+    -> select max(total_tip) from (
+    -> select sum(Order_tip) as total_tip from orderlab
+    -> group by year(Order_Date) ) innerq);
++------------------+
+| year(Order_Date) |
++------------------+
+|             2021 |
++------------------+
+1 row in set (0.01 sec)
+
+************************************************************************************************************************
+
+Question 10:
+
+mysql> select datediff(Curdate(),order_date) from orderlab order by order_date ASC limit 1,1;
++--------------------------------+
+| datediff(Curdate(),order_date) |
++--------------------------------+
+|                            380 |
++--------------------------------+
+1 row in set (0.01 sec)
+00000100110110111101111000000000
+00101111101101101010010101010000
+00110011001000000100010011000110
+00011100010110000100100001110011
+practical magic
+dark knight
+beetle juice
+heart breakers
+shrek
+the simpsons movie
+the holiday
+no time to die
+mr. queen
+captain fantastic
+gifted
+the family
+aladdin
+inception
+goodfellas
+interstellar
+psycho
+aliens
+practical magic 81518080 00000100110110111101111000000000
+dark knight 800499024 00101111101101101010010101010000
+beetle juice 857752774 00110011001000000100010011000110
+heart breakers 475547763 00011100010110000100100001110011
+shrek 87590681 00000101001110001000011100011001
+the simpsons movie 180335125 00001010101111111011001000010101
+the holiday 575220439 00100010010010010010101011010111
+no time to die 552873620 00100000111101000010111010010100
+mr. queen 959016693 00111001001010010110111011110101
+captain fantastic 326343679 00010011011100111001101111111111
+gifted 715229248 00101010101000011000100001000000
+the family 505239722 00011110000111010101100010101010
+aladdin 96973923 00000101110001111011010001100011
+inception 296791641 00010001101100001010111001011001
+goodfellas
+goodfellas 140217352 00001000010110111000110000001000
+interstellar
+interstellar 977804398 00111010010010000001110001101110
+psycho
+psycho 336574080 00010100000011111011011010000000
+aliens
+aliens 56951348 00000011011001010000001000110100

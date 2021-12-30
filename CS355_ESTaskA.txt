@@ -1,0 +1,186 @@
+NAME: ADITI GOEL
+ROLL NO.: 1901CS04
+
+//CREATING TABLES
+
+mysql> create table customer(
+    -> Customer_ID varchar(10) primary key,
+    -> Customer_Name varchar(30),
+    -> Customer_Place varchar(20),
+    -> Email_ID varchar(30));
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> create table delivery_boy(
+    -> DB_ID varchar(10) primary key,
+    -> DB_Name varchar(30),
+    -> DB_DOB date);
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> create table orderlab(
+    -> Order_ID varchar(10) primary key,
+    -> Customer_ID varchar(10),
+    -> DB_ID varchar(10),
+    -> Order_Date date,
+    -> Price int,
+    -> Order_tip int,
+    -> Order_rate int);
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> alter table orderlab
+    -> add constraint orderlab_fk1
+    -> foreign key (Customer_ID) REFERENCES customer(Customer_ID);
+Query OK, 0 rows affected (0.12 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table orderlab
+    -> add constraint orderlab_fk2
+    -> foreign key (DB_ID) REFERENCES delivery_boy(DB_ID);
+Query OK, 0 rows affected (0.11 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+//INSERTING ENTRIES INTO TABLE CUSTOMER
+
+mysql> insert into customer values ('1901CS04', 'Aditi', 'Bandra', 'aditi17goel@gmail.com');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into customer values ('1901CS01', 'Abhay', 'Bandra', 'abhay@gmail.com');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customer values ('1901CS02', 'Abhijeet', 'Andheri', 'abhijeet@gmail.com');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customer values ('1901CS03', 'Aditya', 'South Mumbai', 'aditya@gmail.com');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customer values ('1901CS05', 'Shaurya', 'Juhu', 'shauryaa@gmail.com');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customer values ('1901CS06', 'Dinesh', 'Navi Mumbai', 'dinesh@gmail.com');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customer values ('1901CS07', 'Kaustubh', 'Goregaon', 'kaustubh@gmail.com');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customer values ('1901CS08', 'Aakash', 'Navi Mumbai', 'aakash@gmail.com');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customer values ('1901CS09', 'Avinash', 'South Mumbai', 'avinash@gmail.com');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customer values ('1901CS10', 'Soley', 'Andheri', 'soley@gmail.com');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from customer;
++-------------+---------------+----------------+-----------------------+
+| Customer_ID | Customer_Name | Customer_Place | Email_ID              |
++-------------+---------------+----------------+-----------------------+
+| 1901CS01    | Abhay         | Bandra         | abhay@gmail.com       |
+| 1901CS02    | Abhijeet      | Andheri        | abhijeet@gmail.com    |
+| 1901CS03    | Aditya        | South Mumbai   | aditya@gmail.com      |
+| 1901CS04    | Aditi         | Bandra         | aditi17goel@gmail.com |
+| 1901CS05    | Shaurya       | Juhu           | shauryaa@gmail.com    |
+| 1901CS06    | Dinesh        | Navi Mumbai    | dinesh@gmail.com      |
+| 1901CS07    | Kaustubh      | Goregaon       | kaustubh@gmail.com    |
+| 1901CS08    | Aakash        | Navi Mumbai    | aakash@gmail.com      |
+| 1901CS09    | Avinash       | South Mumbai   | avinash@gmail.com     |
+| 1901CS10    | Soley         | Andheri        | soley@gmail.com       |
++-------------+---------------+----------------+-----------------------+
+10 rows in set (0.00 sec)
+
+//INSERTING ENTRIES INTO TABLE DELIVERY_BOY
+
+mysql> insert into delivery_boy values ('DB1', 'Manish', '1999/08/08');
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert into delivery_boy values ('DB2', 'Mayank', '2000/01/08');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into delivery_boy values ('DB3', 'Sahil', '1989/01/12');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into delivery_boy values ('DB4', 'Shubham', '1987/11/10');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into delivery_boy values ('DB5', 'Omkar', '1987/10/11');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into delivery_boy values ('DB6', 'Jay', '2001/02/11');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into delivery_boy values ('DB7', 'Akshay', '2001/06/03');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into delivery_boy values ('DB8', 'Harsh', '1999/06/03');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into delivery_boy values ('DB9', 'Hemant', '1999/05/03');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into delivery_boy values ('DB10', 'Harish', '1998/11/03');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from delivery_boy;
++-------+---------+------------+
+| DB_ID | DB_Name | DB_DOB     |
++-------+---------+------------+
+| DB1   | Manish  | 1999-08-08 |
+| DB10  | Harish  | 1998-11-03 |
+| DB2   | Mayank  | 2000-01-08 |
+| DB3   | Sahil   | 1989-01-12 |
+| DB4   | Shubham | 1987-11-10 |
+| DB5   | Omkar   | 1987-10-11 |
+| DB6   | Jay     | 2001-02-11 |
+| DB7   | Akshay  | 2001-06-03 |
+| DB8   | Harsh   | 1999-06-03 |
+| DB9   | Hemant  | 1999-05-03 |
++-------+---------+------------+
+10 rows in set (0.00 sec)
+
+//INSERTING ENTRIES INTO TABLE ORDERLAB
+
+mysql> insert into orderlab values ( 'OD1', '1901CS04', 'DB1', '2021/01/01', 256, 5, 5);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orderlab values ( 'OD2', '1901CS04', 'DB2', '2021/04/11', 256, 4, 3);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orderlab values ( 'OD3', '1901CS10', 'DB4', '2021/10/04', 567, 10, 5);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orderlab values ( 'OD4', '1901CS05', 'DB6', '2021/06/04', 189, 10, 4);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orderlab values ( 'OD5', '1901CS01', 'DB3', '2021/05/04', 345, 6, 4);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orderlab values ( 'OD6', '1901CS02', 'DB7', '2021/05/14', 2345, 20, 5);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orderlab values ( 'OD7', '1901CS07', 'DB7', '2021/05/12', 2245, 5, 3);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orderlab values ( 'OD8', '1901CS02', 'DB10', '2021/10/12', 45, 0, 3);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orderlab values ( 'OD9', '1901CS02', 'DB10', '2021/11/12', 45, 0, 3);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orderlab values ( 'OD10', '1901CS06', 'DB10', '2021/11/12', 145, 10, 3);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from orderlab;
++----------+-------------+-------+------------+-------+-----------+------------+
+| Order_ID | Customer_ID | DB_ID | Order_Date | Price | Order_tip | Order_rate |
++----------+-------------+-------+------------+-------+-----------+------------+
+| OD1      | 1901CS04    | DB1   | 2021-01-01 |   256 |         5 |          5 |
+| OD10     | 1901CS06    | DB10  | 2021-11-12 |   145 |        10 |          3 |
+| OD2      | 1901CS04    | DB2   | 2021-04-11 |   256 |         4 |          3 |
+| OD3      | 1901CS10    | DB4   | 2021-10-04 |   567 |        10 |          5 |
+| OD4      | 1901CS05    | DB6   | 2021-06-04 |   189 |        10 |          4 |
+| OD5      | 1901CS01    | DB3   | 2021-05-04 |   345 |         6 |          4 |
+| OD6      | 1901CS02    | DB7   | 2021-05-14 |  2345 |        20 |          5 |
+| OD7      | 1901CS07    | DB7   | 2021-05-12 |  2245 |         5 |          3 |
+| OD8      | 1901CS02    | DB10  | 2021-10-12 |    45 |         0 |          3 |
+| OD9      | 1901CS02    | DB10  | 2021-11-12 |    45 |         0 |          3 |
++----------+-------------+-------+------------+-------+-----------+------------+
+10 rows in set (0.00 sec)

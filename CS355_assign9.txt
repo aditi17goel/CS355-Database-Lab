@@ -1,0 +1,365 @@
+Name: Aditi Goel
+Roll No. 1901CS04
+
+-- TASK 1
+
+-- FOR PROVIDED CSV transaction.csv
+
+-- SubTask A
+-- Create a table
+mysql> CREATE TABLE transactions(
+    -> Series_reference varchar(20),
+    -> Period varchar(8),
+    -> Data_value float,
+    -> Suppressed varchar(20),
+    -> STATUS varchar(20),
+    -> UNITS varchar(20),
+    -> Magnitude int,
+    -> Subject text,
+    -> Group_data text,
+    -> Series_title_1 text,
+    -> Series_title_2 text,
+    -> Series_title_3 text,
+    -> Series_title_4 text,
+    -> Series_title_5 text);
+Query OK, 0 rows affected (0.16 sec)
+
+-- Load data into table
+mysql> LOAD DATA LOCAL INFILE 'transactions.csv'
+    -> INTO TABLE transactions CHARACTER SET utf8mb4 FIELDS TERMINATED BY ','
+    -> ENCLOSED BY '"' LINES TERMINATED BY '\n'
+    -> IGNORE 1 LINES (Series_reference, Period, @Data_value, Suppressed, STATUS, UNITS, Magnitude, Subject, Group_data, Series_title_1, Series_title_2, Series_title_3, Series_title_4, Series_title_5)
+    -> SET Data_value = NULLIF(@Data_value, '');
+Query OK, 16352 rows affected (0.68 sec)
+Records: 16352  Deleted: 0  Skipped: 0  Warnings: 0
+
+****************************************************************************************************************************
+
+--SubTask B
+
+-- First set the profiling to 1
+mysql> SET profiling = 1;
+
+-- Running SELECT queries
+mysql> SELECT Data_value FROM transactions WHERE Data_value < 50000.0;
+mysql> SHOW PROFILES;
++----------+------------+----------------------------------------------------------------+
+| Query_ID | Duration   | Query                                                          |
++----------+------------+----------------------------------------------------------------+
+|        1 | 0.08915275 | SELECT Data_value FROM transactions WHERE Data_value < 55000.0 |
+|        2 | 0.07249725 | SELECT Data_value FROM transactions WHERE Data_value < 55000.0 |
+|        3 | 0.06246650 | SELECT Data_value FROM transactions WHERE Data_value < 55000.0 |
+|        4 | 0.07065500 | SELECT Data_value FROM transactions WHERE Data_value < 55000.0 |
+|        5 | 0.07251200 | SELECT Data_value FROM transactions WHERE Data_value < 55000.0 |
+|        6 | 0.08314225 | SELECT Data_value FROM transactions WHERE Data_value < 55000.0 |
++----------+------------+----------------------------------------------------------------+
+6 rows in set, 1 warning (0.00 sec)
+-- Thus we can calculate average time for SELECT query
+-- AVERAGE(SELECT) = (0.08915275 + 0.07249725 + 0.06246650 + 0.07065500 + 0.07251200 + 0.08314225) / 6 seconds = 0.075070958 seconds
+
+
+-- Running UPDATE queries
+UPDATE transactions SET Data_value = Data_value - 140 WHERE Data_value > 150.0 AND Data_value < 45000.;
+mysql> show profiles;
++----------+------------+--------------------------------------------------------------------------------------------------------+
+| Query_ID | Duration   | Query                                                                                                  |
++----------+------------+--------------------------------------------------------------------------------------------------------+
+|        1 | 0.34318800 | UPDATE transactions SET Data_value = Data_value - 140 WHERE Data_value > 150.0 AND Data_value < 45000. |
+|        2 | 0.25322600 | UPDATE transactions SET Data_value = Data_value - 140 WHERE Data_value > 150.0 AND Data_value < 45000. |
+|        3 | 0.24573150 | UPDATE transactions SET Data_value = Data_value - 140 WHERE Data_value > 150.0 AND Data_value < 45000. |
+|        4 | 0.25006875 | UPDATE transactions SET Data_value = Data_value - 140 WHERE Data_value > 150.0 AND Data_value < 45000. |
+|        5 | 0.24794625 | UPDATE transactions SET Data_value = Data_value - 140 WHERE Data_value > 150.0 AND Data_value < 45000. |
++----------+------------+--------------------------------------------------------------------------------------------------------+
+5 rows in set, 1 warning (0.00 sec)
+-- Thus we can calculate the average time for UPDATE query
+-- AVERAGE(UPDATE) = (0.34318800  + 0.25322600  + 0.24573150  + 0.25006875  + 0.24794625 ) / 5 seconds = 0.2680321 seconds;
+
+-- Running INSERT queries (Run this 5 times)
+INSERT INTO transactions VALUES("ECTA.S19ZZ1", "2008.03", 100.21, "", "C", "Dollars", 7, "Electronic Card Transactions (ANZSIC06) - ECT", "Total values - Electronic card transactions A/S/T by division", "Actual", "RTS total industries", "", "", "");
++----------+------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Query_ID | Duration   | Query                                                                                                                                                                                                                                                    |
++----------+------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|        1 | 0.01192325 | INSERT INTO transactions VALUES("ECTA.S19ZZ1", "2008.03", 100.21, "", "C", "Dollars", 7, "Electronic Card Transactions (ANZSIC06) - ECT", "Total values - Electronic card transactions A/S/T by division", "Actual", "RTS total industries", "", "", "") |
+|        2 | 0.00806425 | INSERT INTO transactions VALUES("ECTA.S19ZZ1", "2008.03", 100.21, "", "C", "Dollars", 7, "Electronic Card Transactions (ANZSIC06) - ECT", "Total values - Electronic card transactions A/S/T by division", "Actual", "RTS total industries", "", "", "") |
+|        3 | 0.00939125 | INSERT INTO transactions VALUES("ECTA.S19ZZ1", "2008.03", 100.21, "", "C", "Dollars", 7, "Electronic Card Transactions (ANZSIC06) - ECT", "Total values - Electronic card transactions A/S/T by division", "Actual", "RTS total industries", "", "", "") |
+|        4 | 0.00847350 | INSERT INTO transactions VALUES("ECTA.S19ZZ1", "2008.03", 100.21, "", "C", "Dollars", 7, "Electronic Card Transactions (ANZSIC06) - ECT", "Total values - Electronic card transactions A/S/T by division", "Actual", "RTS total industries", "", "", "") |
+|        5 | 0.00864525 | INSERT INTO transactions VALUES("ECTA.S19ZZ1", "2008.03", 100.21, "", "C", "Dollars", 7, "Electronic Card Transactions (ANZSIC06) - ECT", "Total values - Electronic card transactions A/S/T by division", "Actual", "RTS total industries", "", "", "") |
++----------+------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+5 rows in set, 1 warning (0.00 sec)
+0.01192325 + 0.00806425 + 0.00939125 + 0.00847350 + 0.00864525
+-- Thus we can calculate average time for INSERT query
+-- AVERAGE(INSERT) = (0.01192325 + 0.00806425 + 0.00939125 + 0.00847350 + 0.00864525) / 5 seconds = 0.0092995 seconds
+
+
+****************************************************************************************************************************
+
+-- SubTask C
+
+-- Create new table and insert into it
+
+mysql> CREATE TABLE transactions_new LIKE transactions;
+
+mysql> INSERT transactions_new SELECT * FROM transactions;
+Query OK, 16357 rows affected (0.74 sec)
+Records: 16357  Duplicates: 0  Warnings: 0
+
+-- Create a new index on Data_value column
+mysql> CREATE INDEX idx_tr ON transactions_new(Data_value);
+
+****************************************************************************************************************************
+
+-- SubTask D
+
+-- Running SELECT queries (Run this 5 times)
+SELECT Data_value FROM transactions_new WHERE Data_value > 10.0 AND Data_value < 50000.0;
+mysql> show profiles;
++----------+------------+--------------------------------------------------------------------+
+| Query_ID | Duration   | Query                                                              |
++----------+------------+--------------------------------------------------------------------+
+|        1 | 0.03058125 | SELECT Data_value FROM transactions_new WHERE Data_value < 50000.0 |
+|        2 | 0.01780200 | SELECT Data_value FROM transactions_new WHERE Data_value < 50000.0 |
+|        3 | 0.01905425 | SELECT Data_value FROM transactions_new WHERE Data_value < 50000.0 |
+|        4 | 0.02248750 | SELECT Data_value FROM transactions_new WHERE Data_value < 50000.0 |
+|        5 | 0.02213200 | SELECT Data_value FROM transactions_new WHERE Data_value < 50000.0 |
++----------+------------+--------------------------------------------------------------------+
+-- Thus we can calculate average time for SELECT query
+0.03058125 + 0.01780200 + 0.01905425 + 0.02248750 + 0.02213200
+-- AVERAGE(SELECT) = (0.03058125 + 0.01780200 + 0.01905425 + 0.02248750 + 0.02213200) / 5 seconds = 0.0224114 seconds
+
+-- Running UPDATE queries (Run 5 times)
+UPDATE transactions_new SET Data_value = Data_value - 140 WHERE Data_value > 150.0 AND Data_value < 45000.;
+mysql> show profiles;
++----------+------------+------------------------------------------------------------------------------------------------------------+
+| Query_ID | Duration   | Query                                                                                                      |
++----------+------------+------------------------------------------------------------------------------------------------------------+
+|        1 | 0.49702600 | UPDATE transactions_new SET Data_value = Data_value - 140 WHERE Data_value > 150.0 AND Data_value < 45000. |
+|        2 | 0.43650750 | UPDATE transactions_new SET Data_value = Data_value - 140 WHERE Data_value > 150.0 AND Data_value < 45000. |
+|        3 | 0.41395050 | UPDATE transactions_new SET Data_value = Data_value - 140 WHERE Data_value > 150.0 AND Data_value < 45000. |
+|        4 | 0.38857925 | UPDATE transactions_new SET Data_value = Data_value - 140 WHERE Data_value > 150.0 AND Data_value < 45000. |
+|        5 | 0.40071225 | UPDATE transactions_new SET Data_value = Data_value - 140 WHERE Data_value > 150.0 AND Data_value < 45000. |
++----------+------------+------------------------------------------------------------------------------------------------------------+
+5 rows in set, 1 warning (0.00 sec)
+-- Thus we can calculate average time for UPDATE query
+-- AVERAGE(UPDATE) = (0.49702600 + 0.43650750 + 0.41395050 + 0.38857925 + 0.40071225) / 5 seconds = 0.4273551 seconds
+ seconds
+
+-- Running INSERT queries (Run 5 times)
+INSERT INTO transactions_new VALUES("ECTA.S19ZZ1", "2008.03", 100.21, "", "C", "Dollars", 7, "Electronic Card Transactions (ANZSIC06) - ECT", "Total values - Electronic card transactions A/S/T by division", "Actual", "RTS total industries", "", "", "");
+mysql> show profiles \G;
+*************************** 1. row ***************************
+Query_ID: 1
+Duration: 0.01022950
+   Query: INSERT INTO transactions_new VALUES("ECTA.S19ZZ1", "2008.03", 100.21, "", "C", "Dollars", 7, "Electronic Card Transactions (ANZSIC06) - ECT", "Total values - Electronic card transactions A/S/T by division", "Actual", "RTS total industries", "", "", "")
+*************************** 2. row ***************************
+Query_ID: 2
+Duration: 0.00842100
+   Query: INSERT INTO transactions_new VALUES("ECTA.S19ZZ2", "2008.03", 100.21, "", "C", "Dollars", 7, "Electronic Card Transactions (ANZSIC06) - ECT", "Total values - Electronic card transactions A/S/T by division", "Actual", "RTS total industries", "", "", "")
+*************************** 3. row ***************************
+Query_ID: 3
+Duration: 0.00857875
+   Query: INSERT INTO transactions_new VALUES("ECTA.S19ZZ3", "2008.03", 100.21, "", "C", "Dollars", 7, "Electronic Card Transactions (ANZSIC06) - ECT", "Total values - Electronic card transactions A/S/T by division", "Actual", "RTS total industries", "", "", "")
+*************************** 4. row ***************************
+Query_ID: 4
+Duration: 0.00855075
+   Query: INSERT INTO transactions_new VALUES("ECTA.S19ZZ4", "2008.03", 100.21, "", "C", "Dollars", 7, "Electronic Card Transactions (ANZSIC06) - ECT", "Total values - Electronic card transactions A/S/T by division", "Actual", "RTS total industries", "", "", "")
+*************************** 5. row ***************************
+Query_ID: 5
+Duration: 0.00815450
+   Query: INSERT INTO transactions_new VALUES("ECTA.S19ZZ5", "2008.03", 100.21, "", "C", "Dollars", 7, "Electronic Card Transactions (ANZSIC06) - ECT", "Total values - Electronic card transactions A/S/T by division", "Actual", "RTS total industries", "", "", "")
+
+5 rows in set, 1 warning (0.00 sec)
+-- Thus we can calculate average time for INSERT query
+-- AVERAGE(INSERT) = (0.01022950 + 0.00842100 + 0.00857875 + 0.00855075 + 0.00815450 ) / 5 seconds = 0.0439345 seconds
+
+
+****************************************************************************************************************************
+
+-- SubTask E: Analysis
+
+-- SELECT: The SELECT query fastens up a little due to indexing of the Data_value column. The time taken for unindexed table is more than the time taken for the indexed table.
+
+-- UPDATE: The UPDATE query slows down to quite some extent. We can see that the increased time is in certain queries indicating that the index table gets updated which takes more time in case of transactions_new
+
+-- INSERT: The INSERT query takes slightly greater time. The increased time is distributed over all queries. The increased time is due to the addition of new entries to the index table thus making it a bit slower.
+
+
+****************************************************************************************************************************
+
+
+
+-- FOR OWN CSV
+-- About the CSV File
+-- Link to the file: https://www.stats.govt.nz/large-datasets/csv-files-for-download/ (Effects of COVID-19 on trade: At 20 October 2021 (provisional) – CSV)
+The CSV file denotes the COVID trade with other countries along with the commodities exported/imported/reimported.
+The CSV File contains the columns namely Direction, Year, _date, Weekday, Current_Match, Country, Commodity, Transport_Mode, Measure, Value and Cumulative.
+
+Changed the format of _date values in the csv file from DD/MM/YYYY to YYYY/MM/DD to support it in MySQL.
+
+The datatype of each attribute:
+Direction : varchar
+Year : int
+_Date : date
+Weekday : varchar
+Current_Match : varchar
+Country : varchar
+Commodity : text
+Transport_Mode : varchar
+Measure : varchar
+Value : bigint,
+Cumulative : bigint
+
+ The file has 108974 records.
+
+************************************************************************************************************************************
+
+-- SubTask A
+-- Create a table
+CREATE TABLE trade(
+	Direction varchar(20),
+	Year int,
+	_Date date,
+	Weekday varchar(20),
+	Current_Match varchar(20),
+	Country varchar(30),
+	Commodity text,
+	Transport_Mode varchar(10),
+	Measure varchar(20),
+	Value bigint,
+	Cumulative bigint);
+
+-- Load data into table
+LOAD DATA LOCAL INFILE 'effects-of-covid19-on-trade-at-20-october-2021-provisional.csv' INTO TABLE trade FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 LINES;
+
+************************************************************************************************************************************
+
+--SubTask B
+
+-- First set the profiling to 1
+SET profiling = 1;
+
+-- Running SELECT queries (Run this 5 times) (Selects ~46000 rows)
+-- Range query involving two attributes
+SELECT Value FROM trade WHERE Cumulative > 100000 AND Value < 900000000;
+
+mysql> show profiles;
++----------+------------+-------------------------------------------------------------------------+
+| Query_ID | Duration   | Query                                                                   |
++----------+------------+-------------------------------------------------------------------------+
+|        1 | 0.23258900 | SELECT Value FROM trade WHERE Cumulative > 100000 AND Value < 900000000 |
+|        2 | 0.19488950 | SELECT Value FROM trade WHERE Cumulative > 100000 AND Value < 900000000 |
+|        3 | 0.19986925 | SELECT Value FROM trade WHERE Cumulative > 100000 AND Value < 900000000 |
+|        4 | 0.20755675 | SELECT Value FROM trade WHERE Cumulative > 100000 AND Value < 900000000 |
+|        5 | 0.19544450 | SELECT Value FROM trade WHERE Cumulative > 100000 AND Value < 900000000 |
++----------+------------+-------------------------------------------------------------------------+
+5 rows in set, 1 warning (0.00 sec)
+-- Thus we can calculate average time for SELECT query
+-- AVERAGE(SELECT) = (0.23258900 + 0.19488950 + 0.19986925 + 0.20755675 + 0.19544450) / 5 seconds = 0.2060698 seconds
+
+
+-- Running UPDATE queries (Run this 5 times)
+UPDATE trade SET Value = Value + 6785 WHERE Cumulative > 100000 AND Value < 900000000;
+mysql> show profiles;
++----------+------------+---------------------------------------------------------------------------------------+
+| Query_ID | Duration   | Query                                                                                 |
++----------+------------+---------------------------------------------------------------------------------------+
+|        1 | 0.31396175 | UPDATE trade SET Value = Value + 6785 WHERE Cumulative > 100000 AND Value < 900000000 |
+|        2 | 0.32095025 | UPDATE trade SET Value = Value + 6785 WHERE Cumulative > 100000 AND Value < 900000000 |
+|        3 | 0.32050525 | UPDATE trade SET Value = Value + 6785 WHERE Cumulative > 100000 AND Value < 900000000 |
+|        4 | 0.32181075 | UPDATE trade SET Value = Value + 6785 WHERE Cumulative > 100000 AND Value < 900000000 |
+|        5 | 0.32008675 | UPDATE trade SET Value = Value + 6785 WHERE Cumulative > 100000 AND Value < 900000000 |
++----------+------------+---------------------------------------------------------------------------------------+
+5 rows in set, 1 warning (0.00 sec)
+-- Thus we can calculate the average time for UPDATE query
+-- AVERAGE(UPDATE) = (0.31396175 + 0.32095025 + 0.32050525 + 0.32181075 + 0.32008675) / 5 seconds = 0.31946295 seconds;
+
+-- Running INSERT queries (Run this 5 times)
+INSERT INTO trade VALUES("Imports", "2015", "2014/11/07", "Tuesday", "1/02/2020", "All", "All", "All", "$", 87641892, 108626891);
+mysql> show profiles;
++----------+------------+----------------------------------------------------------------------------------------------------------------------------------+
+| Query_ID | Duration   | Query                                                                                                                            |
++----------+------------+----------------------------------------------------------------------------------------------------------------------------------+
+|        1 | 0.01018125 | INSERT INTO trade VALUES("Imports", "2015", "2014/11/07", "Tuesday", "1/02/2020", "All", "All", "All", "$", 87641892, 108626891) |
+|        2 | 0.01020825 | INSERT INTO trade VALUES("Imports", "2015", "2014/11/07", "Tuesday", "1/02/2020", "All", "All", "All", "$", 87641892, 108626891) |
+|        3 | 0.01009125 | INSERT INTO trade VALUES("Imports", "2015", "2014/11/07", "Tuesday", "1/02/2020", "All", "All", "All", "$", 87641892, 108626891) |
+|        4 | 0.00828375 | INSERT INTO trade VALUES("Imports", "2015", "2014/11/07", "Tuesday", "1/02/2020", "All", "All", "All", "$", 87641892, 108626891) |
+|        5 | 0.00972675 | INSERT INTO trade VALUES("Imports", "2015", "2014/11/07", "Tuesday", "1/02/2020", "All", "All", "All", "$", 87641892, 108626891) |
++----------+------------+----------------------------------------------------------------------------------------------------------------------------------+
+6 rows in set, 1 warning (0.00 sec)
+-- Thus we can calculate average time for INSERT query
+-- AVERAGE(INSERT) = (0.01018125 + 0.01020825 + 0.01009125 + 0.00828375 + 0.00972675) / 5 seconds = 0.00969825 seconds
+
+************************************************************************************************************************************
+
+-- SubTask C
+
+-- Create new table and insert into it
+CREATE TABLE trades_new LIKE trade;
+INSERT trades_new SELECT * FROM trade;
+
+-- Create a new index on Data_value column
+CREATE INDEX idx_trades_new ON trades_new(Value);
+
+-- Justification of choosing value as index file attribute:
+All the range queries that we are performing have value as one of their attributes, so it will speed up the look up.
+
+************************************************************************************************************************************
+
+-- SubTask D
+
+-- Running SELECT queries (Run this 5 times)
+SELECT Value FROM trades_new WHERE Cumulative > 100000 AND Value < 900000000;
+mysql> show profiles;
++----------+------------+------------------------------------------------------------------------------+
+| Query_ID | Duration   | Query                                                                        |
++----------+------------+------------------------------------------------------------------------------+
+|        1 | 0.00558050 | SELECT Value FROM trades_new WHERE Cumulative > 100000 AND Value < 900000000 |
+|        2 | 0.00466100 | SELECT Value FROM trades_new WHERE Cumulative > 100000 AND Value < 900000000 |
+|        3 | 0.00473025 | SELECT Value FROM trades_new WHERE Cumulative > 100000 AND Value < 900000000 |
+|        4 | 0.00583375 | SELECT Value FROM trades_new WHERE Cumulative > 100000 AND Value < 900000000 |
+|        5 | 0.00470150 | SELECT Value FROM trades_new WHERE Cumulative > 100000 AND Value < 900000000 |
++----------+------------+------------------------------------------------------------------------------+
+-- Thus we can calculate average time for SELECT query
+-- AVERAGE(SELECT) = (0.00558050 + 0.00466100 + 0.00473025 + 0.00583375 + 0.00470150) / 5 seconds = 0.0051014 seconds
+
+-- Running UPDATE queries (Run 5 times)
+UPDATE trades_new SET Value = Value + 6785 WHERE Cumulative > 100000 AND Value < 900000000;
+mysql> show profiles;
++----------+------------+--------------------------------------------------------------------------------------------+
+| Query_ID | Duration   | Query                                                                                      |
++----------+------------+--------------------------------------------------------------------------------------------+
+|        1 | 0.00573875 | UPDATE trades_new SET Value = Value + 6785 WHERE Cumulative > 100000 AND Value < 900000000 |
+|        2 | 0.00472950 | UPDATE trades_new SET Value = Value + 6785 WHERE Cumulative > 100000 AND Value < 900000000 |
+|        3 | 0.00470750 | UPDATE trades_new SET Value = Value + 6785 WHERE Cumulative > 100000 AND Value < 900000000 |
+|        4 | 0.00583250 | UPDATE trades_new SET Value = Value + 6785 WHERE Cumulative > 100000 AND Value < 900000000 |
+|        5 | 0.00480900 | UPDATE trades_new SET Value = Value + 6785 WHERE Cumulative > 100000 AND Value < 900000000 |
++----------+------------+--------------------------------------------------------------------------------------------+
+-- Thus we can calculate average time for UPDATE query
+-- AVERAGE(UPDATE) = (0.00573875 + 0.00472950 + 0.00470750 + 0.00583250 + 0.00480900) / 5 seconds = 0.00516345 seconds
+
+-- Running INSERT queries (Run 5 times)
+INSERT INTO trades_new VALUES("Imports", "2015", "2014/11/07", "Tuesday", "1/02/2020", "All", "All", "All", "$", 87641892, 108626891);
+mysql> show profiles;
++----------+------------+---------------------------------------------------------------------------------------------------------------------------------------+
+| Query_ID | Duration   | Query                                                                                                                                 |
++----------+------------+---------------------------------------------------------------------------------------------------------------------------------------+
+|        1 | 0.01216725 | INSERT INTO trades_new VALUES("Imports", "2015", "2014/11/07", "Tuesday", "1/02/2020", "All", "All", "All", "$", 87641892, 108626891) |
+|        2 | 0.01116650 | INSERT INTO trades_new VALUES("Imports", "2015", "2014/11/07", "Tuesday", "1/02/2020", "All", "All", "All", "$", 87641892, 108626891) |
+|        3 | 0.00915600 | INSERT INTO trades_new VALUES("Imports", "2015", "2014/11/07", "Tuesday", "1/02/2020", "All", "All", "All", "$", 87641892, 108626891) |
+|        4 | 0.00931725 | INSERT INTO trades_new VALUES("Imports", "2015", "2014/11/07", "Tuesday", "1/02/2020", "All", "All", "All", "$", 87641892, 108626891) |
+|        5 | 0.00942650 | INSERT INTO trades_new VALUES("Imports", "2015", "2014/11/07", "Tuesday", "1/02/2020", "All", "All", "All", "$", 87641892, 108626891) |
++----------+------------+---------------------------------------------------------------------------------------------------------------------------------------+
+5 rows in set, 1 warning (0.00 sec)
+-- Thus we can calculate average time for INSERT query
+-- AVERAGE(INSERT) = (0.01216725 + 0.01116650 + 0.00915600 + 0.00931725 + 0.00942650) / 5 seconds = 0.0102467 seconds
+
+************************************************************************************************************************************
+
+-- SubTask E: Analysis
+
+-- SELECT: The SELECT query fastens up a little due to indexing of the Data_value column. The time taken for unindexed table is again more than the time taken for the indexed table.
+
+-- UPDATE: The UPDATE query slows down to quite some extent taking more time for execution. We can see that the increased time is in certain queries indicating that the index table gets updated which takes more time in case of trades_new
+
+-- INSERT: The INSERT query takes slightly greater time. The increased time is distributed over all queries. The increased time is due to the addition of new entries to the index table thus making it slow.
+
+************************************************************************************************************************************

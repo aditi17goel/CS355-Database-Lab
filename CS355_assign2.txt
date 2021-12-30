@@ -1,0 +1,208 @@
+-- NAME: Aditi Goel
+-- ROLL NUMBER: 1901CS04
+-- ASSIGNMENT: 2
+
+----------------------------------------------------------------------------
+
+Question 1)
+
+mysql> SELECT CName FROM course
+    -> WHERE CCode LIKE 'CS%';
++---------------------+
+| CName               |
++---------------------+
+| Crs_with_lessCredit |
+| Crs_with_lessCredit |
+| Course3             |
+| Algo                |
+| Crs_with_lessCredit |
+| Course5             |
+| Course6             |
+| Course7             |
+| Course8             |
+| Crs_with_lessCredit |
+| Course10            |
+| Database Systems    |
++---------------------+
+
+----------------------------------------------------------------------------
+
+Question 2)
+
+mysql> SELECT SName FROM student
+    -> WHERE gender = 'M' AND SName LIKE '%a%a%';
++--------+
+| SName  |
++--------+
+| Aakash |
+| Appaji |
++--------+
+
+----------------------------------------------------------------------------
+
+
+Question 3)
+
+// Inner query selects the Rollno where year of enrollment is between 2018 and 2019
+// Outer query selects all those Rollnos which are not present in the inner query result
+
+mysql> SELECT distinct Sname
+    -> FROM student, enrolled
+    -> WHERE Enrolled.Rollno = Student.Rollno AND
+    -> student.Rollno NOT IN (SELECT Rollno from Enrolled WHERE YoE BETWEEN 2018 AND 2019);
+
++----------+
+| Sname    |
++----------+
+| Appaji   |
+| Aakash   |
+| Sushmita |
+| Rohan    |
+| George   |
+| Florida  |
+| Erin     |
+| Devin    |
+| Caty     |
++----------+
+
+----------------------------------------------------------------------------
+
+
+Question 4)
+
+//inner query selects the minimum credit from all the courses
+//outer query then selects all the curses with the credit equal to the minimum credit
+
+mysql> SELECT * FROM course
+    -> HAVING credit = (SELECT MIN(credit) FROM course);
++-------+---------------------+--------+
+| CCode | CName               | Credit |
++-------+---------------------+--------+
+| CS102 | Crs_with_lessCredit |      4 |
+| CS201 | Crs_with_lessCredit |      4 |
+| CS210 | Crs_with_lessCredit |      4 |
+| CS302 | Crs_with_lessCredit |      4 |
++-------+---------------------+--------+
+
+
+----------------------------------------------------------------------------
+
+
+Question 5)
+
+//inner query selects all course codes which were enrolled by one or more student in year 2020
+//outer query then selects all the course names and codes which are not present in the inner Query
+
+mysql> SELECT cname, ccode
+    -> FROM course
+    -> WHERE CCode NOT in (SELECT Course.Ccode FROM Course, Enrolled WHERE Enrolled.YoE = 2020 AND Course.CCode = Enrolled.Ccode);
++---------------------+-------+
+| cname               | ccode |
++---------------------+-------+
+| Crs_with_lessCredit | CS102 |
+| Course8             | CS301 |
+| Crs_with_lessCredit | CS302 |
+| Database Systems    | CS354 |
+| Level_5_1           | CS501 |
+| Level_5_2           | CS502 |
++---------------------+-------+
+
+----------------------------------------------------------------------------
+
+
+Question 6)
+
+mysql> SELECT City, COUNT(Rollno) as COUNT
+    -> FROM Student
+    -> GROUP by City;
++--------+-------+
+| City   | COUNT |
++--------+-------+
+| Ggn    |     1 |
+| Indore |     1 |
+| Bhopal |     1 |
+| Delhi  |     2 |
+| Mumbai |     1 |
+| Bnglr  |     1 |
+| Surat  |     1 |
+| Chdgrh |     1 |
+| Patna  |     1 |
+| Hisar  |     1 |
+| Kerela |     1 |
++--------+-------+
+
+
+----------------------------------------------------------------------------
+
+
+Question 7)
+
+mysql> SELECT Rollno
+    -> FROM Enrolled
+    -> GROUP by Rollno
+    -> HAVING COUNT(Rollno)=5;
++----------+
+| Rollno   |
++----------+
+| 1901cs10 |
++----------+
+1 row in set (0.00 sec)
+
+----------------------------------------------------------------------------
+
+
+Question 8)
+
+//Inserting a student with rollno 1901cs99
+
+mysql> insert into student values ('1901cs99', 'Yash', 'Bnglr', 'M');
+
+
+//Enrolling 1901cs99 in some courses
+
+mysql> insert into enrolled values ('1901cs99', 'CS102', '2019'), ('1901cs99', 'CS202', '2020');
+Query OK, 2 rows affected (0.01 sec)
+
+
+mysql> SELECT COUNT(Rollno) as COUNT
+    -> FROM enrolled
+    -> WHERE Rollno = '1901cs99';
++-------+
+| COUNT |
++-------+
+|     2 |
++-------+
+
+----------------------------------------------------------------------------
+
+
+Question 9)
+
+//inserting some level 5 courses
+
+mysql> insert into course values ('CS501', 'Level_5_1', 6), ('CS502', 'Level_5_2', 8);
+
+mysql> SELECT * FROM course
+    -> WHERE CCode LIKE '__5__';
++-------+-----------+--------+
+| CCode | CName     | Credit |
++-------+-----------+--------+
+| CS501 | Level_5_1 |      6 |
+| CS502 | Level_5_2 |      8 |
++-------+-----------+--------+
+
+----------------------------------------------------------------------------
+
+
+Question 10)
+
+mysql> SELECT COUNT(Rollno) as COUNT
+    -> FROM student
+    -> WHERE Rollno LIKE '%cs%';
++-------+
+| COUNT |
++-------+
+|    13 |
++-------+
+
+----------------------------------------------------------------------------

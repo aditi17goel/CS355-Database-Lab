@@ -1,0 +1,19 @@
+Name: Aditi Goel
+Roll No.: 1901CS04
+
+show databases;
+use dblab;
+CREATE TABLE Student(Rollno varchar(10), SName varchar(10));
+CREATE TABLE Course(CID varchar(10), CName varchar(10), Credit int);
+insert into Student values (1, 'Aditi');
+insert into Student values (2, 'Bob'), (3, 'Caty'), (4, 'Devin'), (5, 'Erin'), (6, 'Florida'), (7, 'George'), (8, 'Harsh'), (9, 'Rohan'), (10, 'Sushmita');
+desc Student;
+insert into Course values ('CS102','Course1',4);
+insert into Course values ('CS201','Course2',4),('CS202','Course3',6),('CS210','Course4',4),('CS211','Course5',6),('CS212','Course6',8),('CS215','Course7',8),('CS301','Course8',6),('CS302','Course9',4),('CS303','Course10',8);
+select * from Student;
+select * from Course;
+create user 'scot'@'3306' identified by 'tiger';
+grant all privileges on dblab.* to 'scot'@'3306';
+//checking if able to access
+select * from Student;
+select * from Course;
